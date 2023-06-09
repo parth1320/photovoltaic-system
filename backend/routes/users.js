@@ -56,7 +56,45 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, "4$98Ys2a#Pq1!bD3");
 
-    res.json({ token });
+    res.json({ token, id: user._id });
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+//User get data
+
+router.get("/user/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // console.log(userId);
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User Not Found" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+router.post("/userUpdate/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { name, email } = req.body;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { name, email },
+      { new: true },
+    );
+    if (!user) {
+      return res.status(404).json({ error: "User not found!" });
+    }
+    res.json(user);
   } catch (error) {
     console.error(error);
   }

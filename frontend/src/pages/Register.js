@@ -29,6 +29,12 @@ const Register = () => {
         body: JSON.stringify({ name, email, password }),
       });
 
+      if (response.ok) {
+        window.location.href = "/";
+      } else {
+        console.error("Registration Failed");
+      }
+
       const data = await response.json();
       console.log(data);
     } catch (error) {

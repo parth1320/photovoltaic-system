@@ -26,10 +26,14 @@ const Login = () => {
       });
 
       if (response.ok) {
-        const { token } = await response.json();
+        const { token, id } = await response.json();
+        console.log(token);
         localStorage.setItem("token", token);
+        localStorage.setItem("id", id);
+
         window.location.href = "/dashboard";
       } else {
+        console.error("Login Failed");
       }
 
       const data = await response.json();
