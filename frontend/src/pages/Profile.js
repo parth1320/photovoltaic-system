@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance/setHeader";
+
+const id = localStorage.getItem("id");
 
 const UserProfile = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    const id = localStorage.getItem("id");
-    axios
+    axiosInstance
       .get(`http://localhost:5000/user/${id}`)
       .then((response) => {
         const user = response.data;
@@ -21,6 +22,16 @@ const UserProfile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    axiosInstance
+      .post(`http://localhost:5000/userUpdate/${id}`, { name, email })
+      .then((response) => {
+        const updatedUser = response.data;
+        setName(updatedUser.name);
+        setEmail(updatedUser.email);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (

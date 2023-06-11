@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import RootLayout from "./pages/Root";
 import UserProfile from "./pages/Profile";
 import "./App.css";
+import Logout from "./pages/Logout";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
         element: <UserProfile />,
       },
     ],
+  },
+  {
+    path: "logout",
+    element: <Logout />,
   },
 ]);
 

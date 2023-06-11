@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const User = require("../models/users");
+const verifyToken = require("../middleware/authorization");
 
 const router = express.Router();
 
@@ -64,7 +65,7 @@ router.post("/login", async (req, res) => {
 
 //User get data
 
-router.get("/user/:id", async (req, res) => {
+router.get("/user/:id", verifyToken, async (req, res) => {
   try {
     const userId = req.params.id;
 
@@ -82,7 +83,7 @@ router.get("/user/:id", async (req, res) => {
   }
 });
 
-router.post("/userUpdate/:id", async (req, res) => {
+router.post("/userUpdate/:id", verifyToken, async (req, res) => {
   try {
     const userId = req.params.id;
     const { name, email } = req.body;

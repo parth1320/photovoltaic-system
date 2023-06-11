@@ -1,7 +1,6 @@
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 const MainNavigation = () => {
   return (
@@ -28,7 +27,7 @@ const MainNavigation = () => {
             </NavDropdown.Item>
             <NavDropdown.Item href="#settings">Settings</NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item href="#logout">Logout</NavDropdown.Item>
+            <NavDropdown.Item href="/logout">Logout</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       </Navbar.Collapse>
