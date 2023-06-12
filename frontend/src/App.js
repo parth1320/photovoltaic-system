@@ -7,10 +7,15 @@ import RootLayout from "./pages/Root";
 import UserProfile from "./pages/Profile";
 import "./App.css";
 import Logout from "./pages/Logout";
+import Auth from "./pages/Auth";
 
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Auth />,
+  },
+  {
+    path: "/login",
     element: <Login />,
   },
   {
