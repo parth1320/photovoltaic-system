@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Card } from "react-bootstrap";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -43,40 +43,54 @@ const Register = () => {
   };
 
   return (
-    <Form onSubmit={submitHandler}>
-      <Form.Group controlId="formName">
-        <Form.Label>Name</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter your name"
-          value={name}
-          onChange={nameChangeHandler}
-        />
-      </Form.Group>
-      <Form.Group controlId="formEmail">
-        <Form.Label>Email address</Form.Label>
-        <Form.Control
-          type="email"
-          placeholder="Enter Email"
-          value={email}
-          onChange={emailChangeHandler}
-        />
-      </Form.Group>
-
-      <Form.Group controlId="formpassword">
-        <Form.Label>Password</Form.Label>
-        <Form.Control
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={passwordChangeHandler}
-        />
-      </Form.Group>
-
-      <Button variant="primary" type="submit">
-        Register
-      </Button>
-    </Form>
+    <Container>
+      <Row className="justify-content-center">
+        <Col xs={12} md={6}>
+          <Card>
+            <Card.Body>
+              <Card.Title>Registration</Card.Title>
+              <Form onSubmit={submitHandler}>
+                <Form.Group controlId="registrationName">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    value={name}
+                    onChange={nameChangeHandler}
+                    required
+                  />
+                </Form.Group>
+                <Form.Group controlId="registrationEmail">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    value={email}
+                    onChange={emailChangeHandler}
+                    required
+                  />
+                </Form.Group>
+                <Form.Group controlId="registrationPassword">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control
+                    type="password"
+                    name="password"
+                    value={password}
+                    onChange={passwordChangeHandler}
+                    required
+                  />
+                </Form.Group>
+                <div className="mt-4">
+                  <Button variant="primary" type="submit">
+                    Register
+                  </Button>
+                </div>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

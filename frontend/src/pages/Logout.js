@@ -6,6 +6,7 @@ const Logout = () => {
 
   useEffect(() => {
     localStorage.removeItem("token");
+    localStorage.removeItem("id");
 
     const timeout = setTimeout(() => {
       navigate("/");

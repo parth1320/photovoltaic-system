@@ -101,4 +101,17 @@ router.post("/userUpdate/:id", verifyToken, async (req, res) => {
   }
 });
 
+router.delete("/delete/:id", verifyToken, async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findByIdAndDelete(id);
+    if (!user) {
+      return res.json({ error: "User Not Found" });
+    }
+    res.json({ message: "Profile deleted successfully" });
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 module.exports = router;

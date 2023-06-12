@@ -5,7 +5,7 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 const MainNavigation = () => {
   return (
     <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="#home">Your App</Navbar.Brand>
+      <Navbar.Brand href="/dashboard">Your App</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
