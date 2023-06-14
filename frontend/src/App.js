@@ -8,6 +8,7 @@ import UserProfile from "./pages/Profile";
 import "./App.css";
 import Logout from "./pages/Logout";
 import Auth from "./pages/Auth";
+import CreateProject from "./pages/project/CreateProjectForm";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Dashboard />,
+      },
+      {
+        path: "create",
+        element: <CreateProject />,
       },
       {
         path: "profile",

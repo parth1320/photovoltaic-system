@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import axiosInstance from "../axiosInstance/setHeader";
 import { Card, Row, Col, Button } from "react-bootstrap";
 
@@ -27,7 +26,7 @@ const Dashboard = () => {
   return (
     <>
       <h1>Project Dashboard</h1>
-      <Button as={Link} to="/projects/create" variant="primary">
+      <Button href="/dashboard/create" variant="primary">
         Create Project
       </Button>
       <Row className="mt-3">
@@ -37,12 +36,22 @@ const Dashboard = () => {
               <Card.Body>
                 <Card.Title>{project.title}</Card.Title>
                 <Card.Text>{project.description}</Card.Text>
-                <Button
-                  variant="danger"
-                  onClick={() => deleteProject(project._id)}
-                >
-                  Delete
-                </Button>
+
+                <div className="d-flex">
+                  <div>
+                    <Button to={`/projects/${project._id}/edit`} variant="info">
+                      Edit
+                    </Button>
+                  </div>
+                  <div>
+                    <Button
+                      variant="danger"
+                      onClick={() => deleteProject(project._id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
               </Card.Body>
             </Card>
           </Col>
