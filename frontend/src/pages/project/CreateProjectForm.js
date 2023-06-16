@@ -1,10 +1,14 @@
+import axiosInstance from "../../axiosInstance/setHeader";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
+
+const userId = localStorage.getItem("id");
 
 const CreateProject = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [product, setProduct] = useState("");
+  const [products, setProducts] = useState("");
   const [customProduct, setCustomProduct] = useState(false);
   const [productParams, setProductParams] = useState({
     powerPeak: "",
@@ -15,19 +19,60 @@ const CreateProject = () => {
     latitude: "",
   });
 
-  const handleSubmit = () => {};
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axiosInstance.post(
+        `http://localhost:5000/project/${userId}`,
+        { title, description, products },
+      );
+      console.log(response.statusText);
+      if (response.statusText === "OK") {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Project could not added!");
+    }
+  };
 
   const handleProductChange = (e) => {
     const selectedProduct = e.target.value;
-    setProduct(selectedProduct);
+    setProducts(selectedProduct);
     if (selectedProduct === "custom") {
       setCustomProduct(true);
     } else {
       setCustomProduct(false);
+      if (selectedProduct === "product1") {
+        setProductParams({
+          powerPeak: "100",
+          orientation: "North",
+          inclination: "30",
+          area: "50",
+          longitude: "72.831",
+          latitude: "21.170",
+        });
+      } else if (selectedProduct === "product2") {
+        setProductParams({
+          powerPeak: "200",
+          orientation: "South",
+          inclination: "20",
+          area: "100",
+          longitude: "12.922",
+          latitude: "50.826",
+        });
+      }
     }
   };
 
-  const handleParamChange = () => {};
+  const handleParamChange = (e) => {
+    const { name, value } = e.target;
+    setProductParams((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   return (
     <Container>
@@ -56,7 +101,7 @@ const CreateProject = () => {
           <Form.Label>Product</Form.Label>
           <Form.Control
             as="select"
-            value={product}
+            value={products}
             onChange={handleProductChange}
           >
             <option value="">Select a product</option>
