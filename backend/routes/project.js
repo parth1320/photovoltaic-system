@@ -4,10 +4,10 @@ const Project = require("../models/project");
 
 const router = express.Router();
 
-router.get("/:id", async (req, res) => {
+router.get("/allproject/:id", async (req, res) => {
   try {
     const userId = req.params.id;
-    const projects = await Project.find({ user: userId });
+    const projects = await Project.find({ user: userId }).populate("products");
     res.status(201).json(projects);
   } catch (error) {
     console.error(error);
@@ -15,18 +15,31 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/project/:id", async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id).populate("products");
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.status(201).json(project);
+  } catch (error) {
+    console.error();
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
 router.post("/project/:id", async (req, res) => {
-  const { title, description, products } = req.body;
+  const { name, description, products } = req.body;
   const userId = req.params.id;
 
-  console.log(title);
+  console.log(name);
 
   try {
     const newProject = new Project({
-      title,
+      user: userId,
+      name,
       description,
       products,
-      user: userId,
     });
 
     const savedProject = await newProject.save();
@@ -39,7 +52,7 @@ router.post("/project/:id", async (req, res) => {
 
 router.put("edit/:id", async (req, res) => {
   const projectId = req.params.id;
-  const { title, description, products } = req.body;
+  const { name, description, products } = req.body;
 
   try {
     const project = await Project.findById(projectId);
@@ -48,7 +61,7 @@ router.put("edit/:id", async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    project.title = title;
+    project.name = name;
     project.description = description;
     project.products = products;
 

@@ -4,14 +4,23 @@ const cors = require("cors");
 
 const userRoutes = require("./routes/users");
 const projectRoutes = require("./routes/project");
+const createProducts = require("./utils/products");
 
 const URI =
   "mongodb+srv://parthkakadiya320:parth1320@cluster0.wptpygu.mongodb.net/photovoltaic?retryWrites=true&w=majority";
 
-mongoose.connect(URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose
+  .connect(URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("connected to mongoDB");
+    createProducts();
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 
 const app = express();
 const PORT = 5000;

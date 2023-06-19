@@ -9,6 +9,7 @@ import "./App.css";
 import Logout from "./pages/Logout";
 import Auth from "./pages/Auth";
 import CreateProject from "./pages/project/CreateProjectForm";
+import ProjectDetails from "./pages/project/ProjectDetails";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <UserProfile />,
+      },
+      {
+        path: "projects/:projectId",
+        element: <ProjectDetails />,
       },
     ],
   },
