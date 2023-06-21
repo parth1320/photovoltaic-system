@@ -10,7 +10,7 @@ const userId = localStorage.getItem("id");
 const CreateProject = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [products, setProducts] = useState([]);
+  const [product, setProduct] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
 
   const navigate = useNavigate();
@@ -21,8 +21,7 @@ const CreateProject = () => {
         const response = await axiosInstance.get(
           "http://localhost:5000/products",
         );
-
-        setProducts(response.data);
+        setProduct(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -38,13 +37,10 @@ const CreateProject = () => {
     setDescription(e.target.value);
   };
 
-  const handleProductChange = (e) => {
-    const selectedOptions = Array.from(
-      e.target.selectedOptions,
-      (option) => option.value,
-    );
-    console.log(selectedOptions);
-    setSelectedProducts(selectedOptions);
+  const handleProductChange = (selectedOptions) => {
+    const selectedProductIds = selectedOptions.map((option) => option.value);
+    console.log(selectedProductIds);
+    setSelectedProducts(selectedProductIds);
   };
 
   const handleSubmit = async (e) => {
@@ -63,9 +59,9 @@ const CreateProject = () => {
     }
   };
 
-  const productOptions = products.map((product) => ({
-    value: product._id,
-    Label: product.name,
+  const productOptions = product.map((p) => ({
+    value: p._id,
+    label: p.name,
   }));
 
   return (
@@ -90,7 +86,9 @@ const CreateProject = () => {
           <Select
             options={productOptions}
             isMulti
-            value={selectedProducts}
+            value={productOptions.filter((option) =>
+              selectedProducts.includes(option.value),
+            )}
             onChange={handleProductChange}
             placeholder="Select products"
           />

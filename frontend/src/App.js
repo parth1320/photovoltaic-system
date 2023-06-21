@@ -10,6 +10,7 @@ import Logout from "./pages/Logout";
 import Auth from "./pages/Auth";
 import CreateProject from "./pages/project/CreateProjectForm";
 import ProjectDetails from "./pages/project/ProjectDetails";
+import VisualMap from "./pages/project/VisualMap";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
       {
         path: "projects/:projectId",
         element: <ProjectDetails />,
+      },
+      {
+        path: "visualmap/:projectId",
+        element: <VisualMap />,
       },
     ],
   },

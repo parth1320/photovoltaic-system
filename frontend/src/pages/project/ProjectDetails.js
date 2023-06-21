@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Card, Container, Row, Col } from "react-bootstrap";
 
 import axiosInstance from "../../axiosInstance/setHeader";
@@ -66,6 +66,14 @@ const ProjectDetails = () => {
               </Card>
             </Col>
           ))}
+        </Row>
+        <Row>
+          <Link
+            to={`/dashboard/visualmap/${project._id}`}
+            className="btn btn-primary mt-3"
+          >
+            View Products on Visual Map
+          </Link>
         </Row>
       </Container>
     </div>
