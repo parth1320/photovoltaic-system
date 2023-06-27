@@ -25,7 +25,6 @@ const Dashboard = () => {
     fetchProjects();
   }, []);
 
-  const deleteProject = () => {};
   return (
     <div>
       <Container>
