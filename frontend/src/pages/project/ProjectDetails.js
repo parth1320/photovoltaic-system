@@ -1,25 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Card, Container, Row, Col } from "react-bootstrap";
-import {
-  Typography,
-  List,
-  Grid,
-  ListItem,
-  ListItemText,
-  Button,
-} from "@mui/material";
-
-import { styled } from "@mui/system";
+import { Container, Row, Col, Table, Button } from "react-bootstrap";
 
 import axiosInstance from "../../axiosInstance/setHeader";
-
-const ProductItem = styled(Grid)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  marginBottom: theme.spacing(1),
-}));
 
 const ProjectDetails = () => {
   const { projectId } = useParams();
@@ -40,6 +23,14 @@ const ProjectDetails = () => {
     fetchProject();
   }, [projectId]);
 
+  const { createdAt } = project;
+
+  const formatedCreatedAt = new Date(createdAt).toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   const handleCreateReport = () => {};
 
   if (!project) {
@@ -48,29 +39,62 @@ const ProjectDetails = () => {
 
   return (
     <div>
-      <Typography variant="h2">{project.name}</Typography>
-      <Typography variant="body1">{project.description}</Typography>
-      <Typography variant="h3">Photovoltaic Products</Typography>
-      <List>
-        {project.products.map((product, index) => (
-          <ListItem key={index}>
-            <ProductItem container>
-              <Grid item>
-                <ListItemText primary={product.name} />
-              </Grid>
-              <Grid item>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => handleCreateReport(product.name)}
-                >
-                  Create Report
-                </Button>
-              </Grid>
-            </ProductItem>
-          </ListItem>
-        ))}
-      </List>
+      <Container>
+        <Row className="mb-3">
+          <Col>
+            <h2>{project.name}</h2>
+            <p>{project.description}</p>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <h3>Photovoltaic Products</h3>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>createdAt</th>
+                  <th style={{ width: "150px" }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {project.products.map((product, index) => (
+                  <tr key={index}>
+                    <td>
+                      <div>
+                        <strong>{product.name}</strong>
+                      </div>
+                      <div style={{ fontSize: "12px" }}>
+                        Area: {product.area} m² | Inclination:{" "}
+                        {product.inclination}° | Orientation:{" "}
+                        <strong>{product.orientation}</strong>
+                      </div>
+                    </td>
+                    <td>{formatedCreatedAt}</td>
+                    <td>
+                      <Button
+                        variant="primary"
+                        onClick={() => handleCreateReport(product.name)}
+                      >
+                        Create Report
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
+
+        <Row>
+          <Link
+            to={`/dashboard/visualmap/${project._id}`}
+            className="btn btn-primary mt-3"
+          >
+            View Products on Visual Map
+          </Link>
+        </Row>
+      </Container>
     </div>
   );
 };

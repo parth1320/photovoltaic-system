@@ -73,6 +73,7 @@ router.put("edit/:id", async (req, res) => {
   }
 });
 
+// delete complete project
 router.delete("/:id", async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
@@ -83,6 +84,38 @@ router.delete("/:id", async (req, res) => {
 
     await project.remove();
     res.json({ message: "Project deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "server error!" });
+  }
+});
+
+//delete product from project
+router.delete("/:projectId/products/:productId", async (req, res) => {
+  try {
+    const { projectId, productId } = req.params;
+
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      res.status(404).json({ message: "Project not found" });
+    }
+
+    const productIndex = project.products.findIndex(
+      (product) => product.toString() === productId,
+    );
+
+    if (productIndex === -1) {
+      return res
+        .status(404)
+        .json({ message: "Product not found in the project" });
+    }
+
+    project.products.splice(productIndex, 1);
+
+    await project.save();
+
+    res.status(200).json({ message: "Product deleted Successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "server error!" });

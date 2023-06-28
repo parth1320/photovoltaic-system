@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { useParams } from "react-router-dom";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 import axiosInstance from "../../axiosInstance/setHeader";
 
@@ -23,7 +24,11 @@ const VisualMap = () => {
       }
     };
     fetchProject();
-  }, []);
+  }, [projectId]);
+
+  const handleEditProduct = () => {};
+
+  const handleDeleteProduct = () => {};
 
   if (!project) {
     return <div>Loading....</div>;
@@ -45,6 +50,20 @@ const VisualMap = () => {
                 <p>Orientation: {product.orientation}</p>
                 <p>Inclination: {product.inclination}</p>
                 <p>Area: {product.area}</p>
+                <div className="popup-actions">
+                  <button
+                    className="edit-button"
+                    onClick={() => handleEditProduct(product._id)}
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    className="delete-button"
+                    onClick={() => handleDeleteProduct(product._id)}
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
               </div>
             </Popup>
           </Marker>

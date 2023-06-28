@@ -48,7 +48,12 @@ const CreateProject = () => {
     try {
       const response = await axiosInstance.post(
         `http://localhost:5000/project/${userId}`,
-        { name, description, products: selectedProducts },
+        {
+          name,
+          description,
+          createdAt: new Date(),
+          products: selectedProducts,
+        },
       );
       console.log(response.statusText);
       if (response.statusText === "OK") {

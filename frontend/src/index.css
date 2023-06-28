@@ -11,3 +11,28 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.popup-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.edit-button,
+.delete-button {
+  padding: 5px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.edit-button {
+  margin-right: 5px;
+  background-color: #17a2b8;
+  color: #fff;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: #fff;
+}
