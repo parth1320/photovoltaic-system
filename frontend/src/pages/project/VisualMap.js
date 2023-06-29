@@ -3,7 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useParams } from "react-router-dom";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
-import "leaflet-defaulticon-compatibility";
+import { toast } from "react-toastify";
+
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 import axiosInstance from "../../axiosInstance/setHeader";
@@ -28,7 +29,19 @@ const VisualMap = () => {
 
   const handleEditProduct = () => {};
 
-  const handleDeleteProduct = () => {};
+  const handleDeleteProduct = async (productId) => {
+    try {
+      const response = await axiosInstance.delete(
+        `http://localhost:5000/${projectId}/products/${productId}`,
+      );
+      if (response.ok) {
+        console.log(`Deleted product ${productId}`);
+        toast.success("Product Deleted Successfully!");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (!project) {
     return <div>Loading....</div>;
