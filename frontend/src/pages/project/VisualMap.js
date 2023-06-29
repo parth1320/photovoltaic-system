@@ -37,9 +37,13 @@ const VisualMap = () => {
       if (response.ok) {
         console.log(`Deleted product ${productId}`);
         toast.success("Product Deleted Successfully!");
+      } else {
+        console.error("Failed to delete product");
+        toast.error("Failed to delete product");
       }
     } catch (error) {
       console.error(error);
+      toast.error("an error occured");
     }
   };
 
