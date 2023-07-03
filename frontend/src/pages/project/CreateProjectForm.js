@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Button, Container } from "react-bootstrap";
 import Select from "react-select";
+import { toast } from "react-toastify";
 
 import axiosInstance from "../../axiosInstance/setHeader";
 
@@ -58,6 +59,7 @@ const CreateProject = () => {
       console.log(response.statusText);
       if (response.statusText === "OK") {
         navigate("/dashboard");
+        toast.success("Project has been created successfully");
       }
     } catch (error) {
       console.error("Project could not added!");

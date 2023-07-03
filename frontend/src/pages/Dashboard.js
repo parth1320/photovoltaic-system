@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Card, Button, Row, Col, Container } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import axiosInstance from "../axiosInstance/setHeader";
 
@@ -9,7 +10,9 @@ const userId = localStorage.getItem("id");
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
 
-  const fetchProjects = async () => {
+  const navigate = useNavigate();
+
+  const fetchProjects = useCallback(async () => {
     try {
       const response = await axiosInstance.get(
         `http://localhost:5000/allproject/${userId}`,
@@ -19,11 +22,27 @@ const Dashboard = () => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [fetchProjects]);
+
+  const projectDeleteHandler = async (projectId) => {
+    try {
+      const response = await axiosInstance.delete(
+        `http://localhost:5000/${projectId}`,
+      );
+      if (response.statusText === "OK") {
+        toast.success("Project deleted successfully");
+        navigate("/dashboard");
+        fetchProjects();
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred");
+    }
+  };
 
   return (
     <div>
@@ -47,6 +66,12 @@ const Dashboard = () => {
                   >
                     View Details
                   </Link>
+                  <Button
+                    onClick={() => projectDeleteHandler(project._id)}
+                    className="btn btn-danger"
+                  >
+                    Delete
+                  </Button>
                 </Card.Footer>
               </Card>
             </Col>

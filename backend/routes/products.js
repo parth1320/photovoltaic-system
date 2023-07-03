@@ -16,4 +16,28 @@ router.get("/products", async (req, res) => {
   }
 });
 
+router.put("/products/:productId", async (req, res) => {
+  const { productId } = req.params;
+  const { powerPeak, orientation, inclination, area, longitude, latitude } =
+    req.body;
+  try {
+    const product = await Products.findById(productId);
+    console.log(product);
+    if (!product) {
+      return res.status(404).json({ message: "Product Not Found" });
+    }
+    product.powerPeak = powerPeak;
+    product.orientation = orientation;
+    product.inclination = inclination;
+    product.area = area;
+    product.longitude = longitude;
+    product.latitude = latitude;
+
+    await product.save();
+    res.status(200).json({ message: "Product Updated Successfully", product });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error!" });
+  }
+});
+
 module.exports = router;

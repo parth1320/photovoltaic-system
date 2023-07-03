@@ -50,7 +50,7 @@ router.post("/project/:id", async (req, res) => {
   }
 });
 
-router.put("edit/:id", async (req, res) => {
+router.put("/edit/:id", async (req, res) => {
   const projectId = req.params.id;
   const { name, description, products } = req.body;
 
@@ -76,13 +76,12 @@ router.put("edit/:id", async (req, res) => {
 // delete complete project
 router.delete("/:id", async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id);
+    const project = await Project.findByIdAndDelete(req.params.id);
 
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    await project.remove();
     res.json({ message: "Project deleted successfully" });
   } catch (error) {
     console.error(error);

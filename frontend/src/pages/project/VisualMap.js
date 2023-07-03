@@ -1,42 +1,58 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useParams } from "react-router-dom";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
+import "leaflet-defaulticon-compatibility";
 import { toast } from "react-toastify";
-
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 import axiosInstance from "../../axiosInstance/setHeader";
+import EditProductForm from "../product/EditProductForm";
 
 const VisualMap = () => {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `http://localhost:5000/project/${projectId}`,
-        );
-        setProject(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchProject();
+  const [editProduct, setEditProduct] = useState({
+    isOpen: false,
+    product: null,
+  });
+
+  const fetchProject = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get(
+        `http://localhost:5000/project/${projectId}`,
+      );
+      setProject(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   }, [projectId]);
 
-  const handleEditProduct = () => {};
+  useEffect(() => {
+    fetchProject();
+  }, [fetchProject]);
+
+  const handleEditProduct = (productId) => {
+    const product = project.products.find(
+      (product) => product._id === productId,
+    );
+    setEditProduct({
+      isOpen: true,
+      product: product,
+    });
+  };
 
   const handleDeleteProduct = async (productId) => {
     try {
       const response = await axiosInstance.delete(
         `http://localhost:5000/${projectId}/products/${productId}`,
       );
-      if (response.ok) {
+      if (response.statusText === "OK") {
         console.log(`Deleted product ${productId}`);
         toast.success("Product Deleted Successfully!");
+        fetchProject();
       } else {
         console.error("Failed to delete product");
         toast.error("Failed to delete product");
@@ -47,9 +63,22 @@ const VisualMap = () => {
     }
   };
 
+  const handleProductUpdate = () => {};
+
+  const handleEditFormClose = () => {};
+
   if (!project) {
     return <div>Loading....</div>;
   }
+
+  editProduct.isOpen && (
+    <EditProductForm
+      product={editProduct.product}
+      onSave={handleProductUpdate}
+      onClose={handleEditFormClose}
+    />
+  );
+
   return (
     <div>
       <h2>Visual Map</h2>

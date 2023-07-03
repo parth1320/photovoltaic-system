@@ -1,35 +1,40 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Container, Row, Col, Table, Button } from "react-bootstrap";
 
 import axiosInstance from "../../axiosInstance/setHeader";
 
 const ProjectDetails = () => {
+  let formatedCreatedAt;
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `http://localhost:5000/project/${projectId}`,
-        );
-        console.log(response.data);
-        setProject(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchProject();
+  const fetchProject = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get(
+        `http://localhost:5000/project/${projectId}`,
+      );
+      setProject(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   }, [projectId]);
 
-  const { createdAt } = project;
+  useEffect(() => {
+    fetchProject();
+  }, [fetchProject]);
 
-  const formatedCreatedAt = new Date(createdAt).toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  if (project) {
+    const { createdAt } = project;
+
+    const newdate = new Date(createdAt).toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
+    formatedCreatedAt = newdate;
+  }
 
   const handleCreateReport = () => {};
 
