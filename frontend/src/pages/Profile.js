@@ -26,7 +26,7 @@ const UserProfile = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axiosInstance
-      .post(`http://localhost:5000/userUpdate/${id}`, { name, email })
+      .put(`http://localhost:5000/userUpdate/${id}`, { name, email })
       .then((response) => {
         const updatedUser = response.data;
         setName(updatedUser.name);

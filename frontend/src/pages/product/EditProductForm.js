@@ -5,7 +5,7 @@ const EditProductForm = ({ product, onSave, onClose }) => {
   const [updatedProduct, setUpdatedProduct] = useState(product);
 
   const handleChange = (e) => {
-    setUpdatedProduct({ ...updatedProduct, [e.target.value]: e.target.value });
+    setUpdatedProduct({ ...updatedProduct, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {

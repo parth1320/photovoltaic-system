@@ -24,7 +24,7 @@ const VisualMap = () => {
         `http://localhost:5000/project/${projectId}`,
       );
       setProject(response.data);
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -38,10 +38,12 @@ const VisualMap = () => {
     const product = project.products.find(
       (product) => product._id === productId,
     );
+    console.log(product);
     setEditProduct({
       isOpen: true,
       product: product,
     });
+    console.log(editProduct);
   };
 
   const handleDeleteProduct = async (productId) => {
@@ -51,7 +53,7 @@ const VisualMap = () => {
       );
       if (response.statusText === "OK") {
         console.log(`Deleted product ${productId}`);
-        toast.success("Product Deleted Successfully!");
+        toast.error("Product Deleted Successfully!");
         fetchProject();
       } else {
         console.error("Failed to delete product");
@@ -63,24 +65,53 @@ const VisualMap = () => {
     }
   };
 
-  const handleProductUpdate = () => {};
+  const handleProductUpdate = async (updatedProduct) => {
+    const {
+      _id,
+      powerPeak,
+      orientation,
+      inclination,
+      area,
+      longitude,
+      latitude,
+    } = updatedProduct;
+    try {
+      const response = await axiosInstance.put(
+        `http://localhost:5000/products/${_id}`,
+        { powerPeak, orientation, inclination, area, longitude, latitude },
+      );
 
-  const handleEditFormClose = () => {};
+      if (response.statusText === "OK") {
+        console.log(`Updated Product ${response.data}`);
+        toast.success("Product Updated Successfully");
+        fetchProject();
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("an error occured");
+    }
+  };
+
+  const handleEditFormClose = () => {
+    setEditProduct({
+      isOpen: false,
+      product: null,
+    });
+  };
 
   if (!project) {
     return <div>Loading....</div>;
   }
 
-  editProduct.isOpen && (
-    <EditProductForm
-      product={editProduct.product}
-      onSave={handleProductUpdate}
-      onClose={handleEditFormClose}
-    />
-  );
-
   return (
     <div>
+      {editProduct.isOpen && (
+        <EditProductForm
+          product={editProduct.product}
+          onSave={handleProductUpdate}
+          onClose={handleEditFormClose}
+        />
+      )}
       <h2>Visual Map</h2>
       <MapContainer center={[0, 0]} zoom={3} style={{ height: "500px" }}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
