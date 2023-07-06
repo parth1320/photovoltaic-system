@@ -6,6 +6,7 @@ const userRoutes = require("./routes/users");
 const projectRoutes = require("./routes/project");
 const productRoutes = require("./routes/products");
 const createProducts = require("./utils/products");
+require("./utils/cronjob");
 
 const URI =
   "mongodb+srv://parthkakadiya320:parth1320@cluster0.wptpygu.mongodb.net/photovoltaic?retryWrites=true&w=majority";
