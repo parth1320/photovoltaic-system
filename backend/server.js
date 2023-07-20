@@ -6,8 +6,7 @@ const userRoutes = require("./routes/users");
 const projectRoutes = require("./routes/project");
 const productRoutes = require("./routes/products");
 const createProducts = require("./utils/products");
-const { calculatePowerpeak } = require("./utils/cronjob");
-
+require("./utils/cronjob");
 const URI =
   "mongodb+srv://parthkakadiya320:parth1320@cluster0.wptpygu.mongodb.net/photovoltaic?retryWrites=true&w=majority";
 
@@ -32,7 +31,6 @@ app.use(express.json());
 app.use(userRoutes);
 app.use(projectRoutes);
 app.use(productRoutes);
-calculatePowerpeak();
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);

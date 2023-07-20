@@ -2,15 +2,17 @@ const axios = require("axios");
 const cron = require("node-cron");
 
 const Project = require("../models/project");
-const Product = require("../models/product");
 const Report = require("../models/report");
-const product = require("../models/product");
-const { calculatePowerOutput } = require("./electricity");
+const {
+  calculatePowerOutput,
+  calculateElectricityGeneration,
+  efficiencyOfProduct,
+} = require("./electricity");
 
 const apiUrl = "https://history.openweathermap.org/data/2.5/history/city";
 const apiKey = "5a032b93152809eb63bb7c23f246adef";
 
-const job = cron.schedule("*/10 * * * * *", async () => {
+const job = cron.schedule("0 * * * *", async () => {
   try {
     const projects = await Project.find().populate("user").populate("products");
 
@@ -32,15 +34,65 @@ const job = cron.schedule("*/10 * * * * *", async () => {
       }
 
       for (const product of products) {
-        const powerPeak = product.powerPeak;
+        const name = product.name;
+        // const powerPeak = product.powerPeak;
         const orientation = product.orientation;
         const inclination = product.inclination;
         const area = product.area;
         const longitude = product.longitude;
         const latitude = product.latitude;
-        // console.log(latitude);
 
-        const peakPower = calculatePowerpeak(latitude, longitude);
+        const startingTime = Math.floor(project.createdAt / 1000);
+        const endingTime = Math.floor(Date.now() / 1000);
+
+        const peakPower = await calculatePowerpeak(
+          latitude,
+          longitude,
+          startingTime,
+          endingTime,
+        );
+
+        const efficiency = efficiencyOfProduct(name);
+
+        const electricityGenerated = await calculateElectricityGeneration(
+          peakPower,
+          orientation,
+          inclination,
+          area,
+        );
+
+        const genratedElectricityBasedOnEfficienncy =
+          electricityGenerated * efficiency;
+
+        console.log(
+          `Generated Electricity: ${genratedElectricityBasedOnEfficienncy.toFixed(
+            2,
+          )} kWh`,
+        );
+
+        //Get current date
+        const currentDate = new Date().setHours(0, 0, 0, 0);
+
+        let report = await Report.findOne({
+          date: currentDate,
+          project: project._id,
+          product: product._id,
+        });
+
+        if (!report) {
+          report = new Report({
+            project: project._id,
+            product: product._id,
+            date: currentDate,
+            electricityGenerated: 0,
+          });
+        }
+
+        // Update and add generated electricity to electricityGenerated field per hour
+
+        report.electricityGenerated += genratedElectricityBasedOnEfficienncy;
+
+        await report.save();
       }
     }
   } catch (error) {
@@ -48,13 +100,15 @@ const job = cron.schedule("*/10 * * * * *", async () => {
   }
 });
 
-const calculatePowerpeak = async (lat, lon) => {
+const calculatePowerpeak = async (lat, lon, start, end) => {
   let powerPeak = 0;
   try {
     const response = await axios.get(apiUrl, {
       params: {
-        lat: "50.828287931512705",
-        lon: "12.918790193543675",
+        lat,
+        lon,
+        start,
+        end,
         appid: apiKey,
       },
     });
@@ -69,6 +123,8 @@ const calculatePowerpeak = async (lat, lon) => {
   } catch (error) {
     console.error(error);
   }
+
+  powerPeak = powerPeak / 1000; // Peak power in kilowatts
   return powerPeak;
 };
 
