@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { toast } from "react-toastify";
 import { Form, Button, Row, Col, Card, Container } from "react-bootstrap";
 
 const Login = () => {
@@ -30,10 +31,11 @@ const Login = () => {
         console.log(token);
         localStorage.setItem("token", token);
         localStorage.setItem("id", id);
-
         window.location.href = "/dashboard";
+        toast.done("Logged In Successfully!");
       } else {
         console.error("Login Failed");
+        toast.error("Login Failed Try Again");
       }
 
       const data = await response.json();
