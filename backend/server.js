@@ -5,6 +5,7 @@ const cors = require("cors");
 const userRoutes = require("./routes/users");
 const projectRoutes = require("./routes/project");
 const productRoutes = require("./routes/products");
+const reportRoutes = require("./routes/report");
 const createProducts = require("./utils/products");
 require("./utils/cronjob");
 const URI =
@@ -31,6 +32,7 @@ app.use(express.json());
 app.use(userRoutes);
 app.use(projectRoutes);
 app.use(productRoutes);
+app.use(reportRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
