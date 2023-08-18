@@ -63,6 +63,7 @@ const CreateProject = () => {
       }
     } catch (error) {
       console.error("Project could not added!");
+      toast.error("Error Occured!");
     }
   };
 
