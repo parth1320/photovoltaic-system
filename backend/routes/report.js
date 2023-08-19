@@ -1,6 +1,5 @@
 const express = require("express");
 const PDFDocument = require("pdfkit");
-const fs = require("fs");
 
 const Report = require("../models/report");
 const Project = require("../models/project");
@@ -37,7 +36,7 @@ router.get("/generate-report/:projectId/:productId", async (req, res) => {
     const doc = new PDFDocument();
 
     //set response header for the pdf file
-    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Type", "application/pdf; charset=utf-8");
     res.setHeader("Content-Disposition", `attachment; filename=report.pdf`);
 
     //pipe the PDF to the responce

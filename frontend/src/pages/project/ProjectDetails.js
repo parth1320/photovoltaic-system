@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Container, Row, Col, Table, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { saveAs } from "file-saver";
 
 import axiosInstance from "../../axiosInstance/setHeader";
 
@@ -37,16 +38,18 @@ const ProjectDetails = () => {
     formatedCreatedAt = newdate;
   }
 
-  const handleCreateReport = (projectId, productId) => {
+  const handleCreateReport = async (projectId, productId) => {
     // console.log(projectId, productId);
     try {
-      const response = axiosInstance.get(
+      const response = await axiosInstance.get(
         `http://localhost:5000/generate-report/${projectId}/${productId}`,
-        { responseType: "blob" },
+        { responseType: "arraybuffer" },
       );
       // Creates a URL for the Blob data and download the PDF
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const blob = new Blob([response.data], { type: "application/pdf" });
+
+      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", "report.pdf");
