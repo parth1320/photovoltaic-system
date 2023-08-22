@@ -2,14 +2,16 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Container, Row, Col, Table, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
-import { saveAs } from "file-saver";
 
 import axiosInstance from "../../axiosInstance/setHeader";
+import CreateProjectForm from "./CreateProjectForm";
 
 const ProjectDetails = () => {
   let formatedCreatedAt;
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [editData, setEditData] = useState(null);
 
   const fetchProject = useCallback(async () => {
     try {
@@ -62,6 +64,39 @@ const ProjectDetails = () => {
     }
   };
 
+  const handleEditClick = (name, description, products) => {
+    console.log(name, description, products);
+    setEditMode(true);
+    setEditData({ name, description, products });
+  };
+
+  const handleFormSubmit = async (formData) => {
+    try {
+      if (editData) {
+        const response = await axiosInstance.put(
+          `http://localhost:5000/edit/${project._id}`,
+          {
+            name: formData.name,
+            description: formData.description,
+            products: formData.selectedProducts.map((prod) => prod._id),
+          },
+        );
+        if (response.statusText === "OK") {
+          toast.success("Project edited successfully...");
+        }
+
+        setEditMode(false);
+        setEditData(null);
+      } else {
+        console.error("Failed to update project");
+        toast.error("Failed to update project..");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error updating project", error);
+    }
+  };
+
   if (!project) {
     return <div>Loading...</div>;
   }
@@ -73,6 +108,19 @@ const ProjectDetails = () => {
           <Col>
             <h2>{project.name}</h2>
             <p>{project.description}</p>
+            <Button
+              variant="info"
+              size="sm"
+              onClick={() =>
+                handleEditClick(
+                  project.name,
+                  project.description,
+                  project.products,
+                )
+              }
+            >
+              Edit Project
+            </Button>
           </Col>
         </Row>
         <Row>
@@ -125,6 +173,14 @@ const ProjectDetails = () => {
             View Products on Visual Map
           </Link>
         </Row>
+
+        {editMode && (
+          <CreateProjectForm
+            editMode={editMode}
+            initialData={editData}
+            onSubmit={handleFormSubmit}
+          />
+        )}
       </Container>
     </div>
   );

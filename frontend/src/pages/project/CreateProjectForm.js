@@ -8,7 +8,7 @@ import axiosInstance from "../../axiosInstance/setHeader";
 
 const userId = localStorage.getItem("id");
 
-const CreateProject = () => {
+const CreateProject = ({ editMode, initialData, onSubmit }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [product, setProduct] = useState([]);
@@ -16,19 +16,34 @@ const CreateProject = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axiosInstance.get(
-          "http://localhost:5000/products",
-        );
-        setProduct(response.data);
-      } catch (error) {
-        console.error(error);
+  useEffect(
+    () => {
+      if (editMode) {
+        setName(initialData.name);
+        setDescription(initialData.description);
+        const selectedProductIds = initialData.products.map((prod) => prod._id);
+        console.log(selectedProductIds);
+        setSelectedProducts(selectedProductIds);
       }
-    };
-    fetchProducts();
-  }, []);
+      const fetchProducts = async () => {
+        try {
+          const response = await axiosInstance.get(
+            "http://localhost:5000/products",
+          );
+          setProduct(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchProducts();
+    },
+    [
+      // editMode,
+      // initialData.name,
+      // initialData.description,
+      // initialData.products,
+    ],
+  );
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -46,6 +61,7 @@ const CreateProject = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const response = await axiosInstance.post(
         `http://localhost:5000/project/${userId}`,
@@ -65,6 +81,9 @@ const CreateProject = () => {
       console.error("Project could not added!");
       toast.error("Error Occured!");
     }
+
+    const formData = { name, description, selectedProducts };
+    onSubmit(formData);
   };
 
   const productOptions = product.map((p) => ({

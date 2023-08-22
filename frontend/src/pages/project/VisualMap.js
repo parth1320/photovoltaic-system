@@ -18,6 +18,12 @@ const VisualMap = () => {
     product: null,
   });
 
+  // const [addProduct, setAddProduct] = useState({
+  //   isOpen: false,
+  //   latitude: null,
+  //   longitude: null,
+  // });
+
   const fetchProject = useCallback(async () => {
     try {
       const response = await axiosInstance.get(
@@ -64,6 +70,16 @@ const VisualMap = () => {
       toast.error("an error occured");
     }
   };
+
+  // const handleMapClick = (e) => {
+  //   const { lat, lng } = e.latlng;
+
+  //   setAddProduct({
+  //     isOpen: true,
+  //     latitude: lat,
+  //     longitude: lng
+  //   })
+  // };
 
   const handleProductUpdate = async (updatedProduct) => {
     const {
@@ -113,7 +129,12 @@ const VisualMap = () => {
         />
       )}
       <h2>Visual Map</h2>
-      <MapContainer center={[0, 0]} zoom={3} style={{ height: "500px" }}>
+      <MapContainer
+        center={[0, 0]}
+        zoom={3}
+        style={{ height: "500px" }}
+        // onClick={handleMapClick}
+      >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {project.products.map((product) => (
           <Marker
