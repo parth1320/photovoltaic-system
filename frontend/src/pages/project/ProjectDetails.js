@@ -70,31 +70,10 @@ const ProjectDetails = () => {
     setEditData({ id, name, description, products });
   };
 
-  const handleFormSubmit = async (formData) => {
-    try {
-      if (editData) {
-        const response = await axiosInstance.put(
-          `http://localhost:5000/edit/${project._id}`,
-          {
-            name: project.name,
-            description: project.description,
-            products: project.products.map((prod) => prod._id),
-          },
-        );
-        if (response.statusText === "OK") {
-          toast.success("Project edited successfully...");
-        }
-
-        setEditMode(false);
-        setEditData(null);
-      } else {
-        console.error("Failed to update project");
-        toast.error("Failed to update project..");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error updating project", error);
-    }
+  const handleProjectUpdate = async (formData) => {
+    console.log(`Updated Data: ${formData}`);
+    setEditMode(false);
+    setEditData(null);
   };
 
   if (!project) {
@@ -179,7 +158,7 @@ const ProjectDetails = () => {
           <CreateProjectForm
             editMode={editMode}
             initialData={editData}
-            onSubmit={handleFormSubmit}
+            onSubmit={handleProjectUpdate}
           />
         )}
       </Container>

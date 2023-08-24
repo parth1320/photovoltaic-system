@@ -16,34 +16,27 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
 
   const navigate = useNavigate();
 
-  useEffect(
-    () => {
-      if (editMode) {
-        setName(initialData.name);
-        setDescription(initialData.description);
-        const selectedProductIds = initialData.products.map((prod) => prod._id);
-        console.log(selectedProductIds);
-        setSelectedProducts(selectedProductIds);
+  useEffect(() => {
+    if (editMode && initialData) {
+      console.log(initialData);
+      setName(initialData.name);
+      setDescription(initialData.description);
+      const selectedProductIds = initialData.products.map((prod) => prod._id);
+      // console.log(selectedProductIds);
+      setSelectedProducts(selectedProductIds);
+    }
+    const fetchProducts = async () => {
+      try {
+        const response = await axiosInstance.get(
+          "http://localhost:5000/products",
+        );
+        setProduct(response.data);
+      } catch (error) {
+        console.error(error);
       }
-      const fetchProducts = async () => {
-        try {
-          const response = await axiosInstance.get(
-            "http://localhost:5000/products",
-          );
-          setProduct(response.data);
-        } catch (error) {
-          console.error(error);
-        }
-      };
-      fetchProducts();
-    },
-    [
-      // editMode,
-      // initialData.name,
-      // initialData.description,
-      // initialData.products,
-    ],
-  );
+    };
+    fetchProducts();
+  }, [editMode, initialData]);
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -62,24 +55,49 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axiosInstance.post(
-        `http://localhost:5000/project/${userId}`,
-        {
-          name,
-          description,
-          createdAt: new Date(),
-          products: selectedProducts,
-        },
-      );
-      console.log(response.statusText);
-      if (response.statusText === "OK") {
-        navigate("/dashboard");
-        toast.success("Project has been created successfully");
+    const formData = {
+      name,
+      description,
+      products: selectedProducts,
+    };
+
+    if (editMode) {
+      try {
+        const response = await axiosInstance.put(
+          `http://localhost:5000/edit/${initialData.id}`,
+          formData,
+        );
+        if (response.statusText === "OK") {
+          toast.success("Project edited successfully...");
+          onSubmit();
+        } else {
+          console.error("Failed to update project");
+          toast.error("Failed to update project..");
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Error updating project", error);
       }
-    } catch (error) {
-      console.error("Project could not added!");
-      toast.error("Error Occured!");
+    } else {
+      try {
+        const response = await axiosInstance.post(
+          `http://localhost:5000/project/${userId}`,
+          {
+            name,
+            description,
+            createdAt: new Date(),
+            products: selectedProducts,
+          },
+        );
+        console.log(response.statusText);
+        if (response.statusText === "OK") {
+          navigate("/dashboard");
+          toast.success("Project has been created successfully");
+        }
+      } catch (error) {
+        console.error("Project could not added!");
+        toast.error("Error Occured!");
+      }
     }
   };
 
@@ -119,7 +137,7 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
         </Form.Group>
 
         <Button variant="primary" type="submit">
-          Create
+          {editMode ? "Save Changes" : "Create Report"}
         </Button>
       </Form>
     </Container>
