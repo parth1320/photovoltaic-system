@@ -72,6 +72,7 @@ const ProjectDetails = () => {
 
   const handleProjectUpdate = async (formData) => {
     console.log(`Updated Data: ${formData}`);
+    fetchProject();
     setEditMode(false);
     setEditData(null);
   };
