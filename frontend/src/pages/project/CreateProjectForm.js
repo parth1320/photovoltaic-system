@@ -81,9 +81,6 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
       console.error("Project could not added!");
       toast.error("Error Occured!");
     }
-
-    const formData = { name, description, selectedProducts };
-    onSubmit(formData);
   };
 
   const productOptions = product.map((p) => ({

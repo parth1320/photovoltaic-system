@@ -64,10 +64,10 @@ const ProjectDetails = () => {
     }
   };
 
-  const handleEditClick = (name, description, products) => {
+  const handleEditClick = (id, name, description, products) => {
     console.log(name, description, products);
     setEditMode(true);
-    setEditData({ name, description, products });
+    setEditData({ id, name, description, products });
   };
 
   const handleFormSubmit = async (formData) => {
@@ -76,9 +76,9 @@ const ProjectDetails = () => {
         const response = await axiosInstance.put(
           `http://localhost:5000/edit/${project._id}`,
           {
-            name: formData.name,
-            description: formData.description,
-            products: formData.selectedProducts.map((prod) => prod._id),
+            name: project.name,
+            description: project.description,
+            products: project.products.map((prod) => prod._id),
           },
         );
         if (response.statusText === "OK") {
@@ -113,6 +113,7 @@ const ProjectDetails = () => {
               size="sm"
               onClick={() =>
                 handleEditClick(
+                  project._id,
                   project.name,
                   project.description,
                   project.products,
