@@ -108,7 +108,7 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
 
   return (
     <Container>
-      <h2>Create Project</h2>
+      <h2>{editMode ? "" : "Create Project"}</h2>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="projectName">
           <Form.Label>Name</Form.Label>

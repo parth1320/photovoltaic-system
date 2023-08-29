@@ -10,39 +10,15 @@ const createProducts = async () => {
     const products = [
       {
         name: "Hanwha QxCells",
-        powerPeak: 300,
-        orientation: "N",
-        inclination: 30,
-        area: 1.5,
-        longitude: 123.456,
-        latitude: 45.678,
       },
       {
         name: "First Solar",
-        powerPeak: 280,
-        orientation: "S",
-        inclination: 25,
-        area: 2,
-        longitude: 123.456,
-        latitude: 45.678,
       },
       {
         name: "Aiko",
-        powerPeak: 320,
-        orientation: "E",
-        inclination: 20,
-        area: 1.8,
-        longitude: 123.456,
-        latitude: 45.678,
       },
       {
         name: "JinkoSolar",
-        powerPeak: 310,
-        orientation: "W",
-        inclination: 35,
-        area: 2.2,
-        longitude: 123.456,
-        latitude: 45.678,
       },
     ];
 

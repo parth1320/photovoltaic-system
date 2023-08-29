@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Container, Row, Col, Table, Button } from "react-bootstrap";
+import { Container, Row, Col, Table, Button, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 import axiosInstance from "../../axiosInstance/setHeader";
@@ -155,13 +155,26 @@ const ProjectDetails = () => {
           </Link>
         </Row>
 
-        {editMode && (
+        <Modal show={editMode} onHide={() => setEditMode(false)}>
+          <Modal.Header>
+            <Modal.Title>Edit Project</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <CreateProjectForm
+              editMode={editMode}
+              initialData={editData}
+              onSubmit={handleProjectUpdate}
+            />
+          </Modal.Body>
+        </Modal>
+
+        {/* {editMode && (
           <CreateProjectForm
             editMode={editMode}
             initialData={editData}
             onSubmit={handleProjectUpdate}
           />
-        )}
+        )} */}
       </Container>
     </div>
   );
