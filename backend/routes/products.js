@@ -1,8 +1,23 @@
 const express = require("express");
 
 const Products = require("../models/product");
+const Project = require("../models/project");
 
 const router = express.Router();
+
+router.post("/addproduct", async (req, res) => {
+  try {
+    const { name, powerPeak, orientation, inclination, area } = req.body;
+
+    const newProduct = new Products({
+      name,
+      powerPeak,
+      orientation,
+      inclination,
+      area,
+    });
+  } catch (error) {}
+});
 
 router.get("/products", async (req, res) => {
   try {
