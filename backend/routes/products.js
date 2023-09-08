@@ -16,7 +16,24 @@ router.post("/addproduct", async (req, res) => {
       inclination,
       area,
     });
-  } catch (error) {}
+
+    //save product to database
+    await newProduct.save();
+
+    //add the product to the project's products Array
+
+    const projectId = req.params.projectId;
+    const project = await Project.findById(projectId);
+    project.products.push(newProduct);
+    await project.save();
+
+    res
+      .status(201)
+      .json({ message: "Product added successfully", product: newProduct });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 router.get("/products", async (req, res) => {

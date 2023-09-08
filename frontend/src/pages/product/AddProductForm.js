@@ -1,13 +1,19 @@
 import React, { useState } from "react";
-import { Form, Modal } from "react-bootstrap";
+import { Form, Modal, Button, Row, Col } from "react-bootstrap";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+
+import "./AddProductForm.module.css";
 
 const AddProductForm = ({ show, onHide, productNames, onAddProduct }) => {
   const [selectedProducts, setSelectedProducts] = useState("");
+
   const [productDetails, setProductDetails] = useState({
     powerPeak: "",
     orientation: "",
     inclination: "",
     area: "",
+    latitude: null,
+    longitude: null,
   });
 
   const handleSumbit = (e) => {
@@ -16,24 +22,89 @@ const AddProductForm = ({ show, onHide, productNames, onAddProduct }) => {
     onHide();
   };
 
+  const MapEventHandler = () => {
+    const map = useMapEvents({
+      click: (e) => {
+        setProductDetails({
+          ...productDetails,
+          latitude: e.latlng.lat,
+          longitude: e.latlng.lng,
+        });
+      },
+    });
+    return null;
+  };
+
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Add Product</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <div className="map-container">
+          <MapContainer
+            center={[
+              productDetails.latitude || 0,
+              productDetails.longitude || 0,
+            ]}
+            zoom={10}
+            style={{ height: "300px", width: "100%" }}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <MapEventHandler />
+            {productDetails.latitude && productDetails.longitude && (
+              <Marker
+                position={[productDetails.latitude, productDetails.longitude]}
+              />
+            )}
+          </MapContainer>
+        </div>
         <Form onSubmit={handleSumbit}>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="latitude">
+                <Form.Label>Latitude</Form.Label>
+                <Form.Control
+                  type="number"
+                  step="any"
+                  value={productDetails.latitude || ""}
+                  onChange={(e) =>
+                    setProductDetails({
+                      ...productDetails,
+                      latitude: parseFloat(e.target.value),
+                    })
+                  }
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="longitude">
+                <Form.Label>Longitude</Form.Label>
+                <Form.Control
+                  type="number"
+                  step="any"
+                  value={productDetails.longitude || ""}
+                  onChange={(e) =>
+                    setProductDetails({
+                      ...productDetails,
+                      longitude: parseFloat(e.target.value),
+                    })
+                  }
+                />
+              </Form.Group>
+            </Col>
+          </Row>
           <Form.Group controlId="productName">
             <Form.Label>Product Name</Form.Label>
             <Form.Control
               as="select"
-              value={selectedProductName}
-              onChange={(e) => setSelectedProductName(e.target.value)}
+              value={selectedProducts}
+              onChange={(e) => setSelectedProducts(e.target.value)}
             >
               <option value="">Select a product</option>
-              {productNames.map((name) => (
-                <option key={name} value={name}>
-                  {name}
+              {productNames.map((productName) => (
+                <option key={productName.name} value={productName.name}>
+                  {productName.name}
                 </option>
               ))}
             </Form.Control>
@@ -91,6 +162,7 @@ const AddProductForm = ({ show, onHide, productNames, onAddProduct }) => {
               }
             />
           </Form.Group>
+
           <Button variant="primary" type="submit">
             Add Product
           </Button>

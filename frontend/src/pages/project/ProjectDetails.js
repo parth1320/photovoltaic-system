@@ -1,22 +1,16 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 
 import axiosInstance from "../../axiosInstance/setHeader";
-import VisualMap from "./VisualMap";
+// import VisualMap from "./VisualMap";
+import AddProductForm from "../product/AddProductForm";
 
 const ProjectDetails = () => {
   const { projectId } = useParams();
-  const [project, setProject] = useState(null);
-  const [showAddProductModel, setShowAddProductModel] = useState(false);
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
-  const [productDetails, setProductDetails] = useState({
-    powerPeak: "",
-    orientation: "",
-    inclination: "",
-    area: "",
-  });
+  const [project, setProject] = useState([]);
+  const [productNames, setProductNames] = useState([]);
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
 
   const fetchProject = useCallback(async () => {
     try {
@@ -29,22 +23,37 @@ const ProjectDetails = () => {
     }
   }, [projectId]);
 
+  const fetchProducts = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `http://localhost:5000/products`,
+      );
+      setProductNames(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchProject();
+    fetchProducts();
   }, [fetchProject]);
+
+  const handleAddProduct = () => {};
 
   return (
     <Container>
       <h1>Project: {project.name}</h1>
       <h4>Project description: {project.description}</h4>
       {/* {map Section} */}
-      <Row>
+      {/* <Row>
         <Col md={8}>
           <VisualMap latitude={latitude} longitude={longitude} />
         </Col>
-      </Row>
+      </Row> */}
       {/* {Add Product Button} */}
-      <Button>Add Product</Button>
+      <Button onClick={() => setShowAddProductModal(true)}>Add Product</Button>
 
       {/* {Product Grid View} */}
       <Row>
@@ -53,22 +62,12 @@ const ProjectDetails = () => {
         </Col>
       </Row>
 
-      <Modal
-        show={showAddProductModel}
-        onHide={() => setShowAddProductModel(false)}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Add Product</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Modal.Footer>
-            <Button>Add</Button>
-            <Button onClick={() => setShowAddProductModel(false)}>
-              Cancel
-            </Button>
-          </Modal.Footer>
-        </Modal.Body>
-      </Modal>
+      <AddProductForm
+        show={showAddProductModal}
+        onHide={() => setShowAddProductModal(false)}
+        onAddProduct={handleAddProduct}
+        productNames={productNames}
+      />
     </Container>
   );
 };
