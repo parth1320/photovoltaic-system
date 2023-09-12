@@ -7,7 +7,15 @@ const router = express.Router();
 
 router.post("/addproduct", async (req, res) => {
   try {
-    const { name, powerPeak, orientation, inclination, area } = req.body;
+    const {
+      name,
+      powerPeak,
+      orientation,
+      inclination,
+      area,
+      latitude,
+      longitude,
+    } = req.body;
 
     const newProduct = new Products({
       name,
@@ -15,6 +23,8 @@ router.post("/addproduct", async (req, res) => {
       orientation,
       inclination,
       area,
+      latitude,
+      longitude,
     });
 
     //save product to database

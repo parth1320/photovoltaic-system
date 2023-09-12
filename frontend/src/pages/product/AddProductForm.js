@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Form, Modal, Button, Row, Col } from "react-bootstrap";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-import { FaMapMarker } from "react-icons/fa";
 
 import "leaflet/dist/leaflet.css";
 import "./AddProductForm.module.css";
+import icon from "./constants";
 
 const AddProductForm = ({ show, onHide, productNames, onAddProduct }) => {
   const [selectedProducts, setSelectedProducts] = useState("");
+  // const [markerPosition, setMarkerPosition] = useState(null);
 
   const [productDetails, setProductDetails] = useState({
     powerPeak: "",
@@ -25,12 +26,13 @@ const AddProductForm = ({ show, onHide, productNames, onAddProduct }) => {
   };
 
   const MapEventHandler = () => {
-    const map = useMapEvents({
+    useMapEvents({
       click: (e) => {
+        const { lat, lng } = e.latlng;
         setProductDetails({
           ...productDetails,
-          latitude: e.latlng.lat,
-          longitude: e.latlng.lng,
+          latitude: lat,
+          longitude: lng,
         });
       },
     });
@@ -59,9 +61,8 @@ const AddProductForm = ({ show, onHide, productNames, onAddProduct }) => {
             {productDetails.latitude && productDetails.longitude && (
               <Marker
                 position={[productDetails.latitude, productDetails.longitude]}
-              >
-                <FaMapMarker size={24} color="red" />
-              </Marker>
+                icon={icon}
+              />
             )}
           </MapContainer>
         </div>
