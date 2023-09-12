@@ -36,3 +36,8 @@ code {
   background-color: #dc3545;
   color: #fff;
 }
+
+.leaflet-container {
+  height: 300px;
+  width: 100%;
+}

@@ -1,5 +1,10 @@
 .map-container {
-  height: 20px;
   width: 100%;
-  margin-top: 20px;
+  height: 400px;
+}
+
+.modal {
+  width: 80%; /* Adjust as needed */
+  height: 80%; /* Adjust as needed */
+  overflow: auto; /* Enable scrolling if content exceeds modal size */
 }

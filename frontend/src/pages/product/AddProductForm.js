@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Form, Modal, Button, Row, Col } from "react-bootstrap";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { FaMapMarker } from "react-icons/fa";
 
+import "leaflet/dist/leaflet.css";
 import "./AddProductForm.module.css";
 
 const AddProductForm = ({ show, onHide, productNames, onAddProduct }) => {
@@ -41,21 +43,25 @@ const AddProductForm = ({ show, onHide, productNames, onAddProduct }) => {
         <Modal.Title>Add Product</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="map-container">
+        <div>
           <MapContainer
             center={[
-              productDetails.latitude || 0,
-              productDetails.longitude || 0,
+              productDetails.latitude || 20.5937,
+              productDetails.longitude || 78.9629,
             ]}
-            zoom={10}
-            style={{ height: "300px", width: "100%" }}
+            zoom={3}
           >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
             <MapEventHandler />
             {productDetails.latitude && productDetails.longitude && (
               <Marker
                 position={[productDetails.latitude, productDetails.longitude]}
-              />
+              >
+                <FaMapMarker size={24} color="red" />
+              </Marker>
             )}
           </MapContainer>
         </div>
