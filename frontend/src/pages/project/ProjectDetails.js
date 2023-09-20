@@ -46,16 +46,9 @@ const ProjectDetails = () => {
     <Container>
       <h1>Project: {project.name}</h1>
       <h4>Project description: {project.description}</h4>
-      {/* {map Section} */}
-      {/* <Row>
-        <Col md={8}>
-          <VisualMap latitude={latitude} longitude={longitude} />
-        </Col>
-      </Row> */}
-      {/* {Add Product Button} */}
+
       <Button onClick={() => setShowAddProductModal(true)}>Add Product</Button>
 
-      {/* {Product Grid View} */}
       <Row>
         <Col>
           <h4>Product Details</h4>
