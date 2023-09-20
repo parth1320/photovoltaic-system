@@ -5,8 +5,10 @@ const Project = require("../models/project");
 
 const router = express.Router();
 
-router.post("/addproduct", async (req, res) => {
+router.post("/:projectId/products", async (req, res) => {
   try {
+    const projectId = req.params.projectId;
+
     const {
       name,
       powerPeak,
@@ -28,11 +30,10 @@ router.post("/addproduct", async (req, res) => {
     });
 
     //save product to database
-    await newProduct.save();
+    // await newProduct.save();
 
     //add the product to the project's products Array
 
-    const projectId = req.params.projectId;
     const project = await Project.findById(projectId);
     project.products.push(newProduct);
     await project.save();

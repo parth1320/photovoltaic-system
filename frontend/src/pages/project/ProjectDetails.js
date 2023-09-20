@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import axiosInstance from "../../axiosInstance/setHeader";
 // import VisualMap from "./VisualMap";
@@ -29,7 +30,6 @@ const ProjectDetails = () => {
         `http://localhost:5000/products`,
       );
       setProductNames(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -40,7 +40,38 @@ const ProjectDetails = () => {
     fetchProducts();
   }, [fetchProject]);
 
-  const handleAddProduct = () => {};
+  const handleAddProduct = async (productDetails) => {
+    try {
+      const {
+        name,
+        powerPeak,
+        orientation,
+        inclination,
+        area,
+        latitude,
+        longitude,
+      } = productDetails;
+      const response = await axiosInstance.post(
+        `http://localhost:5000/${project._id}/products`,
+        {
+          name,
+          powerPeak,
+          orientation,
+          inclination,
+          area,
+          latitude,
+          longitude,
+        },
+      );
+
+      if (response.statusText === "Created") {
+        toast.success("Product has been added successfully");
+      }
+    } catch (error) {
+      console.error(`Product not added ${error}`);
+      toast.error("Product not added!");
+    }
+  };
 
   return (
     <Container>
