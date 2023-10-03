@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Button, Container } from "react-bootstrap";
-import Select from "react-select";
 import { toast } from "react-toastify";
 
 import axiosInstance from "../../axiosInstance/setHeader";
@@ -11,32 +10,8 @@ const userId = localStorage.getItem("id");
 const CreateProject = ({ editMode, initialData, onSubmit }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [product, setProduct] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (editMode && initialData) {
-      console.log(initialData);
-      setName(initialData.name);
-      setDescription(initialData.description);
-      const selectedProductIds = initialData.products.map((prod) => prod._id);
-      // console.log(selectedProductIds);
-      setSelectedProducts(selectedProductIds);
-    }
-    const fetchProducts = async () => {
-      try {
-        const response = await axiosInstance.get(
-          "http://localhost:5000/products",
-        );
-        setProduct(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchProducts();
-  }, [editMode, initialData]);
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -46,19 +21,12 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
     setDescription(e.target.value);
   };
 
-  const handleProductChange = (selectedOptions) => {
-    const selectedProductIds = selectedOptions.map((option) => option.value);
-    console.log(selectedProductIds);
-    setSelectedProducts(selectedProductIds);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = {
       name,
       description,
-      products: selectedProducts,
     };
 
     if (editMode) {
@@ -86,7 +54,6 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
             name,
             description,
             createdAt: new Date(),
-            products: selectedProducts,
           },
         );
         console.log(response.statusText);
@@ -100,11 +67,6 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
       }
     }
   };
-
-  const productOptions = product.map((p) => ({
-    value: p._id,
-    label: p.name,
-  }));
 
   return (
     <Container>
@@ -121,18 +83,6 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
             rows={3}
             value={description}
             onChange={handleDescriptionChange}
-          />
-        </Form.Group>
-        <Form.Group controlId="productSelect">
-          <Form.Label>Select Solar Products</Form.Label>
-          <Select
-            options={productOptions}
-            isMulti
-            value={productOptions.filter((option) =>
-              selectedProducts.includes(option.value),
-            )}
-            onChange={handleProductChange}
-            placeholder="Select products"
           />
         </Form.Group>
 

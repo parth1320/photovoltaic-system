@@ -1,5 +1,13 @@
-import React, { useCallback, useState, useEffect } from "react";
-import { Container, Row, Col, Button, Table } from "react-bootstrap";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Table,
+  Alert,
+  Spinner,
+} from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -15,7 +23,7 @@ const ProjectDetails = () => {
 
   let formatedCreatedAt;
 
-  const fetchProject = async () => {
+  const fetchProject = useCallback(async () => {
     try {
       const response = await axiosInstance.get(
         `http://localhost:5000/project/${projectId}`,
@@ -24,7 +32,7 @@ const ProjectDetails = () => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [projectId]);
 
   const fetchProducts = async () => {
     try {
@@ -40,7 +48,7 @@ const ProjectDetails = () => {
   useEffect(() => {
     fetchProject();
     fetchProducts();
-  }, []);
+  }, [fetchProject]);
 
   const handleCreateReport = () => {};
 
@@ -69,6 +77,7 @@ const ProjectDetails = () => {
       );
 
       if (response.statusText === "Created") {
+        fetchProducts();
         toast.success("Product has been added successfully");
       }
     } catch (error) {
@@ -76,10 +85,6 @@ const ProjectDetails = () => {
       toast.error("Product not added!");
     }
   };
-
-  if (!project) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <Container>
@@ -127,7 +132,9 @@ const ProjectDetails = () => {
                   </tr>
                 ))
               ) : (
-                <h3>Loading...</h3>
+                <Spinner animation="border" role="status">
+                  <span className="sr-only">Loading...</span>
+                </Spinner>
               )}
             </tbody>
           </Table>
