@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button, Table } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -13,7 +13,9 @@ const ProjectDetails = () => {
   const [productNames, setProductNames] = useState([]);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
 
-  const fetchProject = useCallback(async () => {
+  let formatedCreatedAt;
+
+  const fetchProject = async () => {
     try {
       const response = await axiosInstance.get(
         `http://localhost:5000/project/${projectId}`,
@@ -22,7 +24,7 @@ const ProjectDetails = () => {
     } catch (error) {
       console.error(error);
     }
-  }, [projectId]);
+  };
 
   const fetchProducts = async () => {
     try {
@@ -38,7 +40,9 @@ const ProjectDetails = () => {
   useEffect(() => {
     fetchProject();
     fetchProducts();
-  }, [fetchProject]);
+  }, []);
+
+  const handleCreateReport = () => {};
 
   const handleAddProduct = async (productDetails) => {
     try {
@@ -73,6 +77,10 @@ const ProjectDetails = () => {
     }
   };
 
+  if (!project) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Container>
       <h1>Project: {project.name}</h1>
@@ -82,7 +90,47 @@ const ProjectDetails = () => {
 
       <Row>
         <Col>
-          <h4>Product Details</h4>
+          <h3>Photovoltaic Products</h3>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>createdAt</th>
+                <th style={{ width: "150px" }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {project.products ? (
+                project.products.map((product, index) => (
+                  <tr key={index}>
+                    <td>
+                      <div>
+                        <strong>{product.name}</strong>
+                      </div>
+                      <div style={{ fontSize: "12px" }}>
+                        Area: {product.area} m² | Inclination:{" "}
+                        {product.inclination}° | Orientation:{" "}
+                        <strong>{product.orientation}</strong>
+                      </div>
+                    </td>
+                    <td>{formatedCreatedAt}</td>
+                    <td>
+                      <Button
+                        variant="primary"
+                        onClick={() =>
+                          handleCreateReport(project._id, product._id)
+                        }
+                      >
+                        Create Report
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <h3>Loading...</h3>
+              )}
+            </tbody>
+          </Table>
         </Col>
       </Row>
 
