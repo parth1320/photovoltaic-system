@@ -85,6 +85,18 @@ const ProjectDetails = () => {
       toast.error("Product not added!");
     }
   };
+  let noProductMessage = null;
+
+  if (project.products) {
+    if (project.products.length === 0) {
+      noProductMessage = (
+        <Alert variant="info">
+          No products added. Please click "Add Product" to add products to this
+          project.
+        </Alert>
+      );
+    }
+  }
 
   return (
     <Container>
@@ -92,6 +104,9 @@ const ProjectDetails = () => {
       <h4>Project description: {project.description}</h4>
 
       <Button onClick={() => setShowAddProductModal(true)}>Add Product</Button>
+      <Row>
+        <Col>{noProductMessage}</Col>
+      </Row>
 
       <Row>
         <Col>
