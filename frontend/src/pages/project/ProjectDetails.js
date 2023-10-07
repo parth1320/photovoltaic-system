@@ -50,7 +50,29 @@ const ProjectDetails = () => {
     fetchProducts();
   }, [fetchProject]);
 
-  const handleCreateReport = () => {};
+  // const handleCreateReport = async (projectId, productId) => {
+  //   // console.log(projectId, productId);
+  //   try {
+  //     const response = await axiosInstance.get(
+  //       `http://localhost:5000/generate-report/${projectId}/${productId}`,
+  //       { responseType: "arraybuffer" },
+  //     );
+  //     // Creates a URL for the Blob data and download the PDF
+
+  //     const blob = new Blob([response.data], { type: "application/pdf" });
+
+  //     const url = URL.createObjectURL(blob);
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", "report.pdf");
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //   } catch (error) {
+  //     console.error("Error creating report:", error);
+  //     toast.error("Error while creating report...");
+  //   }
+  // };
 
   const handleAddProduct = async (productDetails) => {
     try {
@@ -85,6 +107,7 @@ const ProjectDetails = () => {
       toast.error("Product not added!");
     }
   };
+
   let noProductMessage = null;
 
   if (project.products) {

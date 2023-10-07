@@ -13,17 +13,22 @@ router.get("/generate-report/:projectId/:productId", async (req, res) => {
     const productId = req.params.productId;
 
     const projectData = await Project.findById(projectId).populate("user");
-    const productData = await Product.findById(productId);
 
-    if (!projectData || !productData) {
-      return res.status(404).send("Project or product not found");
+    if (!projectData) {
+      return res.status(404).json({ message: "Project not found" });
     }
 
-    const { user } = projectData;
-    const powerPeak = productData.powerPeak;
-    const orientation = productData.orientation;
-    const inclination = productData.inclination;
-    const area = productData.area;
+    const product = projectData.products.find((p) => p._id == productId);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // const { user } = projectData;
+    const powerPeak = product.powerPeak;
+    const orientation = product.orientation;
+    const inclination = product.inclination;
+    const area = product.area;
 
     // console.log(user.name, powerPeak, orientation, inclination, area);
 
@@ -47,7 +52,7 @@ router.get("/generate-report/:projectId/:productId", async (req, res) => {
     doc.moveDown();
     doc.fontSize(14).text(`Project: ${projectData.name}`);
     doc.moveDown();
-    doc.fontSize(14).text(`Product: ${productData.name}`);
+    doc.fontSize(14).text(`Product: ${product.name}`);
     doc.moveDown();
     doc.fontSize(14).text(`Peak Power: ${powerPeak} watts`);
     doc.moveDown();
@@ -76,6 +81,7 @@ router.get("/generate-report/:projectId/:productId", async (req, res) => {
     reportData.forEach((report) => {
       doc
         .fontSize(12)
+        .fillColor("red")
         .text(report.date.toDateString(), col1Width, yPos, { align: "left" });
       doc.text(report.electricityGenerated, col1Width + col2Width, yPos, {
         align: "left",
