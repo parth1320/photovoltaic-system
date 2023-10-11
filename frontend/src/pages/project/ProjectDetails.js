@@ -35,11 +35,9 @@ const ProjectDetails = () => {
     }
   }, [projectId]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = () => {
     try {
-      const response = await axiosInstance.get(
-        `http://localhost:5000/products`,
-      );
+      const response = axiosInstance.get(`http://localhost:5000/products`);
       setProductNames(response.data);
     } catch (error) {
       console.error(error);
@@ -102,6 +100,8 @@ const ProjectDetails = () => {
       if (response.statusText === "Created") {
         toast.success("Product has been added successfully");
         fetchProducts();
+      } else {
+        toast.error("Product not added!");
       }
     } catch (error) {
       console.error(`Product not added ${error}`);
@@ -109,7 +109,21 @@ const ProjectDetails = () => {
     }
   };
 
-  const deleteProductHandler = () => {};
+  const deleteProductHandler = async (projectId, productId) => {
+    try {
+      const response = await axiosInstance.delete(
+        `http://localhost:5000/${projectId}/products/${productId}`,
+      );
+      if (response.statusText === "OK") {
+        toast.success("Product has been deleted successfully");
+        fetchProducts();
+      } else {
+        toast.error("Product Not deleted..");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const editProductHandler = () => {};
 
@@ -165,7 +179,9 @@ const ProjectDetails = () => {
                       <Trash
                         className="me-4"
                         color="red"
-                        onClick={deleteProductHandler}
+                        onClick={() =>
+                          deleteProductHandler(project._id, product._id)
+                        }
                       />
                       <Pencil
                         className="me-4"
