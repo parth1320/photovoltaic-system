@@ -133,7 +133,7 @@ const AddProductForm = ({ show, onHide, productNames, onAddProduct }) => {
           <Form.Group controlId="productOrientation">
             <Form.Label>Orientation</Form.Label>
             <Form.Control
-              type="text"
+              as="select"
               name="orientation"
               value={productDetails.orientation}
               onChange={(e) =>
@@ -142,7 +142,13 @@ const AddProductForm = ({ show, onHide, productNames, onAddProduct }) => {
                   orientation: e.target.value,
                 })
               }
-            />
+            >
+              <option>Set a direction</option>
+              <option>North</option>
+              <option>East</option>
+              <option>South</option>
+              <option>West</option>
+            </Form.Control>
           </Form.Group>
           <Form.Group controlId="productInclination">
             <Form.Label>Inclination</Form.Label>

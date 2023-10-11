@@ -8,6 +8,7 @@ import {
   Alert,
   Spinner,
 } from "react-bootstrap";
+import { Trash, Pencil } from "react-bootstrap-icons";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -48,31 +49,31 @@ const ProjectDetails = () => {
   useEffect(() => {
     fetchProject();
     fetchProducts();
-  }, [fetchProject]);
+  }, [fetchProject, fetchProducts]);
 
-  // const handleCreateReport = async (projectId, productId) => {
-  //   // console.log(projectId, productId);
-  //   try {
-  //     const response = await axiosInstance.get(
-  //       `http://localhost:5000/generate-report/${projectId}/${productId}`,
-  //       { responseType: "arraybuffer" },
-  //     );
-  //     // Creates a URL for the Blob data and download the PDF
+  const handleCreateReport = async (projectId, productId) => {
+    // console.log(projectId, productId);
+    try {
+      const response = await axiosInstance.get(
+        `http://localhost:5000/generate-report/${projectId}/${productId}`,
+        { responseType: "arraybuffer" },
+      );
+      // Creates a URL for the Blob data and download the PDF
 
-  //     const blob = new Blob([response.data], { type: "application/pdf" });
+      const blob = new Blob([response.data], { type: "application/pdf" });
 
-  //     const url = URL.createObjectURL(blob);
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.setAttribute("download", "report.pdf");
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     document.body.removeChild(link);
-  //   } catch (error) {
-  //     console.error("Error creating report:", error);
-  //     toast.error("Error while creating report...");
-  //   }
-  // };
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "report.pdf");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error creating report:", error);
+      toast.error("Error while creating report...");
+    }
+  };
 
   const handleAddProduct = async (productDetails) => {
     try {
@@ -99,14 +100,18 @@ const ProjectDetails = () => {
       );
 
       if (response.statusText === "Created") {
-        fetchProducts();
         toast.success("Product has been added successfully");
+        fetchProducts();
       }
     } catch (error) {
       console.error(`Product not added ${error}`);
       toast.error("Product not added!");
     }
   };
+
+  const deleteProductHandler = () => {};
+
+  const editProductHandler = () => {};
 
   let noProductMessage = null;
 
@@ -138,7 +143,7 @@ const ProjectDetails = () => {
             <thead>
               <tr>
                 <th>Product Name</th>
-                <th>createdAt</th>
+                <th style={{ width: "150px" }}>Delete & Edit</th>
                 <th style={{ width: "150px" }}>Action</th>
               </tr>
             </thead>
@@ -156,7 +161,18 @@ const ProjectDetails = () => {
                         <strong>{product.orientation}</strong>
                       </div>
                     </td>
-                    <td>{formatedCreatedAt}</td>
+                    <td>
+                      <Trash
+                        className="me-4"
+                        color="red"
+                        onClick={deleteProductHandler}
+                      />
+                      <Pencil
+                        className="me-4"
+                        color="blue"
+                        onClick={editProductHandler}
+                      />
+                    </td>
                     <td>
                       <Button
                         variant="primary"

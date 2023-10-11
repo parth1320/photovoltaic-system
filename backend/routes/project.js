@@ -101,7 +101,7 @@ router.delete("/:projectId/products/:productId", async (req, res) => {
     }
 
     const productIndex = project.products.findIndex(
-      (product) => product.toString() === productId,
+      (product) => product._id.toString() === productId,
     );
 
     if (productIndex === -1) {
