@@ -21,6 +21,9 @@ const ProjectDetails = () => {
   const [project, setProject] = useState([]);
   const [productNames, setProductNames] = useState([]);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [isEditProductModalVisible, setEditProductModalVisibility] =
+    useState(false);
+  const [editProductData, setEditProductData] = useState(null);
 
   let formatedCreatedAt;
 
@@ -35,9 +38,11 @@ const ProjectDetails = () => {
     }
   }, [projectId]);
 
-  const fetchProducts = () => {
+  const fetchProducts = async () => {
     try {
-      const response = axiosInstance.get(`http://localhost:5000/products`);
+      const response = await axiosInstance.get(
+        `http://localhost:5000/products`,
+      );
       setProductNames(response.data);
     } catch (error) {
       console.error(error);
@@ -186,7 +191,7 @@ const ProjectDetails = () => {
                       <Pencil
                         className="me-4"
                         color="blue"
-                        onClick={editProductHandler}
+                        onClick={() => editProductHandler(product)}
                       />
                     </td>
                     <td>
