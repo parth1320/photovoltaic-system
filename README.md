@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Photovoltaic Electricity Planning Project
 
 This project is a web application developed to help users plan their photovoltaic electricity systems. Users can create, update, and delete projects, define multiple photovoltaic products, and choose between different predefined photovoltaic system products. The application provides a visual map where users can view and manage the locations of their photovoltaic products.
@@ -29,7 +29,6 @@ This project is a web application developed to help users plan their photovoltai
   - React Bootstrap
   - Leaflet (for map visualization)
   - Axios (for API requests)
-  
 - **Backend:**
   - Node.js
   - Express.js
@@ -50,8 +49,10 @@ This project is a web application developed to help users plan their photovoltai
    git clone https://github.com/your-username/photovoltaic-electricity-planning.git
    cd photovoltaic-electricity-planning
    ```
+````
 
 2. **Install dependencies:**
+
    ```bash
    # Install backend dependencies
    cd backend
@@ -64,6 +65,7 @@ This project is a web application developed to help users plan their photovoltai
 
 3. **Set up environment variables:**
    Create a `.env` file in the `backend` directory and add the following variables:
+
    ```env
    PORT=5000
    MONGO_URI=your_mongodb_connection_string
@@ -71,6 +73,7 @@ This project is a web application developed to help users plan their photovoltai
    ```
 
 4. **Run the application:**
+
    ```bash
    # Run the backend
    cd backend
@@ -101,6 +104,7 @@ This project is a web application developed to help users plan their photovoltai
 ### Adding/Editing a Product
 
 - **Form Fields:**
+
   - Product Name
   - Power Peak
   - Orientation (N/E/S/W)
@@ -151,15 +155,14 @@ Contributions are welcome! Please fork the repository and create a pull request 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
 ```
 
-This README includes the following sections:
-- **Features:** Lists the key features of the application.
-- **Technologies Used:** Lists the technologies and libraries used in the project.
-- **Installation:** Provides step-by-step instructions for setting up the project locally.
-- **Usage:** Describes how to use the application, including the dashboard and project details page.
-- **API Endpoints:** Documents the backend API endpoints for user, project, and product management.
-- **Contributing:** Explains how others can contribute to the project.
-- **License:** Specifies the project's license.
+### Explanation of the ToC Linking
 
-Make sure to customize the URL in the clone command, the MongoDB connection string, and any other project-specific details.
+1. **Section Titles**: Ensure each section title is unique and accurately reflects the content.
+2. **ToC Links**: The links in the ToC use the format `[Link Text](#lowercased-title-with-hyphens)`. This format converts spaces to hyphens and converts the text to lowercase.
+3. **Special Characters**: If your section titles contain special characters, they should be omitted or replaced in the link format. For example, "API Endpoints" becomes `#api-endpoints`.
+
+This structure ensures that the links in the Table of Contents navigate correctly to the respective sections in your README.
+```
