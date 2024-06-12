@@ -158,11 +158,14 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ```
 
-### Explanation of the ToC Linking
+This README includes the following sections:
+- **Features:** Lists the key features of the application.
+- **Technologies Used:** Lists the technologies and libraries used in the project.
+- **Installation:** Provides step-by-step instructions for setting up the project locally.
+- **Usage:** Describes how to use the application, including the dashboard and project details page.
+- **API Endpoints:** Documents the backend API endpoints for user, project, and product management.
+- **Contributing:** Explains how others can contribute to the project.
+- **License:** Specifies the project's license.
 
-1. **Section Titles**: Ensure each section title is unique and accurately reflects the content.
-2. **ToC Links**: The links in the ToC use the format `[Link Text](#lowercased-title-with-hyphens)`. This format converts spaces to hyphens and converts the text to lowercase.
-3. **Special Characters**: If your section titles contain special characters, they should be omitted or replaced in the link format. For example, "API Endpoints" becomes `#api-endpoints`.
-
-This structure ensures that the links in the Table of Contents navigate correctly to the respective sections in your README.
+Make sure to customize the URL in the clone command, the MongoDB connection string, and any other project-specific details.
 ```
