@@ -2,46 +2,25 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { toast } from "react-toastify";
 import { Form, Button, Row, Col, Card, Container } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+
+import useAuth from "../hooks/useAuth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const emailChangeHandler = (event) => {
-    setEmail(event.target.value);
-  };
-
-  const passwordChangeHandler = (event) => {
-    setPassword(event.target.value);
-  };
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const submitHandler = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const { token, id } = await response.json();
-        console.log(token);
-        localStorage.setItem("token", token);
-        localStorage.setItem("id", id);
-        window.location.href = "/dashboard";
-        toast.done("Logged In Successfully!");
-      } else {
-        console.error("Login Failed");
-        toast.error("Login Failed Try Again");
-      }
-
-      const data = await response.json();
-      console.log(data);
+      await login(email, password);
+      navigate("/dashboard");
+      toast.success("Logged In Successfully!");
     } catch (error) {
       console.error(error);
+      toast.error("Login Failed. Try Again");
     }
   };
 
@@ -59,7 +38,7 @@ const Login = () => {
                     type="email"
                     name="email"
                     value={email}
-                    onChange={emailChangeHandler}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </Form.Group>
@@ -69,7 +48,7 @@ const Login = () => {
                     type="password"
                     name="password"
                     value={password}
-                    onChange={passwordChangeHandler}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </Form.Group>

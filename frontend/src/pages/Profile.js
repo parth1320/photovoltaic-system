@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosInstance/setHeader";
 import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
-
-const id = localStorage.getItem("id");
+import useAuth from "../hooks/useAuth";
 
 const UserProfile = () => {
+  const { userId: id } = useAuth();
   const [profileData, setProfileData] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -21,7 +21,7 @@ const UserProfile = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [id]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

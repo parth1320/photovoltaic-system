@@ -4,10 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import axiosInstance from "../axiosInstance/setHeader";
-
-const userId = localStorage.getItem("id");
+import useAuth from "../hooks/useAuth";
 
 const Dashboard = () => {
+  const { userId } = useAuth();
   const [projects, setProjects] = useState([]);
 
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     fetchProjects();
