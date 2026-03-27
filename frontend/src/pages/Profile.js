@@ -1,53 +1,50 @@
 import React, { useState, useEffect } from "react";
-import axiosInstance from "../axiosInstance/setHeader";
-import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form, Spinner, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { fetchUser, updateUser, deleteUser, userKeys } from "../api/users";
 import useAuth from "../hooks/useAuth";
 
 const UserProfile = () => {
   const { userId: id } = useAuth();
-  const [profileData, setProfileData] = useState(null);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
+  const { data: profileData, isLoading, isError } = useQuery({
+    queryKey: userKeys.detail(id),
+    queryFn: () => fetchUser(id),
+  });
+
   useEffect(() => {
-    axiosInstance
-      .get(`http://localhost:5000/user/${id}`)
-      .then((response) => {
-        const user = response.data;
-        setProfileData(user);
-        setName(user.name);
-        setEmail(user.email);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [id]);
+    if (profileData) {
+      setName(profileData.name);
+      setEmail(profileData.email);
+    }
+  }, [profileData]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axiosInstance
-      .put(`http://localhost:5000/userUpdate/${id}`, { name, email })
-      .then((response) => {
-        const updatedUser = response.data;
-        setName(updatedUser.name);
-        setEmail(updatedUser.email);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+  const updateMutation = useMutation({
+    mutationFn: () => updateUser({ userId: id, name, email }),
+    onSuccess: (updatedUser) => {
+      setName(updatedUser.name);
+      setEmail(updatedUser.email);
+      queryClient.invalidateQueries({ queryKey: userKeys.detail(id) });
+    },
+  });
 
-  const deleteHandler = () => {
-    axiosInstance
-      .delete(`http://localhost:5000/delete/${id}`)
-      .then((response) => {
-        alert(response.data.message);
-        window.location.href("/");
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteUser(id),
+    onSuccess: (data) => {
+      alert(data.message);
+      navigate("/");
+    },
+  });
+
+  if (isLoading) return <Spinner animation="border" />;
+  if (isError) return <Alert variant="danger">Failed to load profile.</Alert>;
 
   return (
     <Container>
@@ -56,42 +53,41 @@ const UserProfile = () => {
           <Card>
             <Card.Body>
               <Card.Title>User Profile</Card.Title>
-              {profileData ? (
-                <Form>
-                  <Form.Group controlId="name">
-                    <Form.Label>Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="email">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      name="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </Form.Group>
-                  <div className="mt-4">
-                    <Button
-                      variant="primary"
-                      onClick={handleSubmit}
-                      className="me-2"
-                    >
-                      Update Profile
-                    </Button>
-                    <Button variant="danger" onClick={deleteHandler}>
-                      Delete Profile
-                    </Button>
-                  </div>
-                </Form>
-              ) : (
-                <Card.Text>Loading profile data...</Card.Text>
-              )}
+              <Form>
+                <Form.Group controlId="name">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </Form.Group>
+                <Form.Group controlId="email">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Form.Group>
+                <div className="mt-4">
+                  <Button
+                    variant="primary"
+                    onClick={() => updateMutation.mutate()}
+                    className="me-2"
+                  >
+                    Update Profile
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => deleteMutation.mutate()}
+                  >
+                    Delete Profile
+                  </Button>
+                </div>
+              </Form>
             </Card.Body>
           </Card>
         </Col>

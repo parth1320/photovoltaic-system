@@ -1,48 +1,32 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Card, Button, Row, Col, Container } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Card, Button, Row, Col, Container, Spinner, Alert } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import axiosInstance from "../axiosInstance/setHeader";
+import { fetchProjects, deleteProject, projectKeys } from "../api/projects";
 import useAuth from "../hooks/useAuth";
 
 const Dashboard = () => {
   const { userId } = useAuth();
-  const [projects, setProjects] = useState([]);
+  const queryClient = useQueryClient();
 
-  const navigate = useNavigate();
+  const { data: projects = [], isLoading, isError } = useQuery({
+    queryKey: projectKeys.all(userId),
+    queryFn: () => fetchProjects(userId),
+  });
 
-  const fetchProjects = useCallback(async () => {
-    try {
-      const response = await axiosInstance.get(
-        `http://localhost:5000/allproject/${userId}`,
-      );
+  const deleteMutation = useMutation({
+    mutationFn: deleteProject,
+    onSuccess: () => {
+      toast.success("Project deleted successfully");
+      queryClient.invalidateQueries({ queryKey: projectKeys.all(userId) });
+    },
+    onError: () => toast.error("An error occurred"),
+  });
 
-      setProjects(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
-
-  const projectDeleteHandler = async (projectId) => {
-    try {
-      const response = await axiosInstance.delete(
-        `http://localhost:5000/${projectId}`,
-      );
-      if (response.statusText === "OK") {
-        toast.success("Project deleted successfully");
-        navigate("/dashboard");
-        fetchProjects();
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred");
-    }
-  };
+  if (isLoading) return <Spinner animation="border" />;
+  if (isError) return <Alert variant="danger">Failed to load projects.</Alert>;
 
   return (
     <div>
@@ -67,7 +51,7 @@ const Dashboard = () => {
                     View Details
                   </Link>
                   <Button
-                    onClick={() => projectDeleteHandler(project._id)}
+                    onClick={() => deleteMutation.mutate(project._id)}
                     className="btn btn-danger"
                   >
                     Delete

@@ -2,69 +2,44 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Button, Container } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import axiosInstance from "../../axiosInstance/setHeader";
-
-const userId = localStorage.getItem("id");
+import { createProject, updateProject, projectKeys } from "../../api/projects";
+import useAuth from "../../hooks/useAuth";
 
 const CreateProject = ({ editMode, initialData, onSubmit }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { userId } = useAuth();
 
-  const handleNameChange = (e) => {
-    setName(e.target.value);
-  };
+  const createMutation = useMutation({
+    mutationFn: () => createProject({ userId, name, description }),
+    onSuccess: () => {
+      toast.success("Project has been created successfully");
+      queryClient.invalidateQueries({ queryKey: projectKeys.all(userId) });
+      navigate("/dashboard");
+    },
+    onError: () => toast.error("Error Occurred!"),
+  });
 
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-  };
+  const updateMutation = useMutation({
+    mutationFn: () =>
+      updateProject({ projectId: initialData.id, name, description }),
+    onSuccess: () => {
+      toast.success("Project edited successfully...");
+      onSubmit();
+    },
+    onError: () => toast.error("Failed to update project.."),
+  });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    const formData = {
-      name,
-      description,
-    };
-
     if (editMode) {
-      try {
-        const response = await axiosInstance.put(
-          `http://localhost:5000/edit/${initialData.id}`,
-          formData,
-        );
-        if (response.statusText === "OK") {
-          toast.success("Project edited successfully...");
-          onSubmit();
-        } else {
-          console.error("Failed to update project");
-          toast.error("Failed to update project..");
-        }
-      } catch (error) {
-        console.error(error);
-        toast.error("Error updating project", error);
-      }
+      updateMutation.mutate();
     } else {
-      try {
-        const response = await axiosInstance.post(
-          `http://localhost:5000/project/${userId}`,
-          {
-            name,
-            description,
-            createdAt: new Date(),
-          },
-        );
-        console.log(response.statusText);
-        if (response.statusText === "OK") {
-          navigate("/dashboard");
-          toast.success("Project has been created successfully");
-        }
-      } catch (error) {
-        console.error("Project could not added!");
-        toast.error("Error Occured!");
-      }
+      createMutation.mutate();
     }
   };
 
@@ -74,7 +49,11 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="projectName">
           <Form.Label>Name</Form.Label>
-          <Form.Control type="text" value={name} onChange={handleNameChange} />
+          <Form.Control
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </Form.Group>
         <Form.Group controlId="projectDescription">
           <Form.Label>Description</Form.Label>
@@ -82,10 +61,9 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
             as="textarea"
             rows={3}
             value={description}
-            onChange={handleDescriptionChange}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </Form.Group>
-
         <Button variant="primary" type="submit">
           {editMode ? "Save Changes" : "Create Report"}
         </Button>
