@@ -8,7 +8,7 @@ const verifyToken = (req, res, next) => {
     return res.status(401).json({ error: "No token provided" });
   }
 
-  jwt.verify(extratedToken, "4$98Ys2a#Pq1!bD3", (err, decoded) => {
+  jwt.verify(extratedToken, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(401).json({ error: "Invalid token!" });
     }

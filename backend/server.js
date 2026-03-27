@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,11 +9,8 @@ const productRoutes = require("./routes/products");
 const reportRoutes = require("./routes/report");
 const createProducts = require("./utils/products");
 require("./utils/cronjob");
-const URI =
-  "mongodb+srv://parthkakadiya320:parth1320@cluster0.wptpygu.mongodb.net/photovoltaic?retryWrites=true&w=majority";
-
 mongoose
-  .connect(URI, {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
