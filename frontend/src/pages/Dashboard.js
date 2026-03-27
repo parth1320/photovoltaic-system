@@ -29,40 +29,50 @@ const Dashboard = () => {
   if (isError) return <Alert variant="danger">Failed to load projects.</Alert>;
 
   return (
-    <div>
-      <Container>
-        <h2 className="mb-4">Dashboard</h2>
+    <Container>
+      <div className="d-flex justify-content-between align-items-center mb-5">
+        <h2 className="display-5 fw-bold text-primary mb-0">Dashboard</h2>
         <Link to="/dashboard/create">
-          <Button variant="primary">Create Project</Button>
+          <Button variant="primary" size="lg" className="rounded-pill shadow-sm px-4">
+            + Create Project
+          </Button>
         </Link>
-        <Row className="mt-4">
-          {projects.map((project) => (
-            <Col key={project._id} lg={4} md={6} className="mb-4">
-              <Card>
-                <Card.Body>
-                  <Card.Title>{project.name}</Card.Title>
-                  <Card.Text>{project.description}</Card.Text>
-                </Card.Body>
-                <Card.Footer>
-                  <Link
-                    to={`/dashboard/projects/${project._id}`}
-                    className="btn btn-primary"
-                  >
-                    View Details
-                  </Link>
-                  <Button
-                    onClick={() => deleteMutation.mutate(project._id)}
-                    className="btn btn-danger"
-                  >
-                    Delete
-                  </Button>
-                </Card.Footer>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Container>
-    </div>
+      </div>
+      <Row>
+        {projects.length === 0 && !isLoading && !isError && (
+          <Col>
+            <Alert variant="info" className="glass-card border-0">
+              No projects found. Click "Create Project" to get started!
+            </Alert>
+          </Col>
+        )}
+        {projects.map((project) => (
+          <Col key={project._id} lg={4} md={6} className="mb-4">
+            <Card className="glass-card border-0 h-100 d-flex flex-column">
+              <Card.Body className="p-4 flex-grow-1">
+                <Card.Title className="fs-4 fw-bold mb-3">{project.name}</Card.Title>
+                <Card.Text className="text-muted">{project.description}</Card.Text>
+              </Card.Body>
+              <Card.Footer className="bg-transparent border-0 p-4 pt-0 d-flex gap-2">
+                <Link
+                  to={`/dashboard/projects/${project._id}`}
+                  className="btn btn-primary flex-grow-1 rounded-pill"
+                >
+                  View Details
+                </Link>
+                <Button
+                  onClick={() => deleteMutation.mutate(project._id)}
+                  variant="danger"
+                  className="rounded-pill px-4"
+                >
+                  Delete
+                </Button>
+              </Card.Footer>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </Container>
   );
 };
 

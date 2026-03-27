@@ -87,77 +87,84 @@ const ProjectDetails = () => {
 
   return (
     <Container>
-      <h1>Project: {project.name}</h1>
-      <h4>Project description: {project.description}</h4>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 className="display-5 fw-bold text-primary mb-2">{project.name}</h1>
+          <h4 className="text-muted fw-normal">{project.description}</h4>
+        </div>
+        <Button 
+          onClick={() => setShowAddProductModal(true)} 
+          variant="primary" 
+          size="lg" 
+          className="rounded-pill shadow-sm px-4"
+        >
+          + Add Product
+        </Button>
+      </div>
 
-      <Button onClick={() => setShowAddProductModal(true)}>Add Product</Button>
       <Row>
         <Col>
           {project.products?.length === 0 && (
-            <Alert variant="info">
-              No products added. Please click "Add Product" to add products to
-              this project.
+            <Alert variant="info" className="glass-card border-0 shadow-sm mt-3">
+              No products added yet. Click <strong>"Add Product"</strong> to add photovoltaic products to this project.
             </Alert>
           )}
         </Col>
       </Row>
 
-      <Row>
-        <Col>
-          <h3>Photovoltaic Products</h3>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th style={{ width: "150px" }}>Delete & Edit</th>
-                <th style={{ width: "150px" }}>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {project.products?.map((product, index) => (
-                <tr key={index}>
-                  <td>
-                    <div>
-                      <strong>{product.name}</strong>
-                    </div>
-                    <div style={{ fontSize: "12px" }}>
-                      Area: {product.area} m² | Inclination:{" "}
-                      {product.inclination}° | Orientation:{" "}
-                      <strong>{product.orientation}</strong>
-                    </div>
-                  </td>
-                  <td>
-                    <Trash
-                      className="me-4"
-                      color="red"
-                      onClick={() =>
-                        deleteProductMutation.mutate({
-                          projectId: project._id,
-                          productId: product._id,
-                        })
-                      }
-                    />
-                    <Pencil className="me-4" color="blue" />
-                  </td>
-                  <td>
-                    <Button
-                      variant="primary"
-                      onClick={() =>
-                        reportMutation.mutate({
-                          projectId: project._id,
-                          productId: product._id,
-                        })
-                      }
-                    >
-                      Create Report
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Col>
-      </Row>
+      {project.products?.length > 0 && (
+        <Row className="mt-4">
+          <Col>
+            <div className="glass-card border-0 p-4">
+              <h3 className="fw-bold mb-4 text-primary">Photovoltaic Products</h3>
+              <div className="table-responsive">
+                <Table hover className="align-middle border-0">
+                  <thead className="bg-light">
+                    <tr>
+                      <th className="border-0 rounded-start px-4">Product Content</th>
+                      <th className="border-0">Actions</th>
+                      <th className="border-0 rounded-end">Reports</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {project.products?.map((product, index) => (
+                      <tr key={index} className="border-bottom">
+                        <td className="px-4 py-3">
+                          <div className="mb-1">
+                            <strong className="fs-5">{product.name}</strong>
+                          </div>
+                          <div className="text-muted" style={{ fontSize: "14px" }}>
+                            <span className="me-3"><i className="bi bi-aspect-ratio me-1"></i> Area: <strong>{product.area} m²</strong></span>
+                            <span className="me-3"><i className="bi bi-arrow-up-right-square me-1"></i> Inclination: <strong>{product.inclination}°</strong></span>
+                            <span><i className="bi bi-compass me-1"></i> Orientation: <strong>{product.orientation}</strong></span>
+                          </div>
+                        </td>
+                        <td className="py-3">
+                          <Button variant="light" className="text-danger border-0 me-2 p-2 shadow-sm rounded-circle" onClick={() => deleteProductMutation.mutate({ projectId: project._id, productId: product._id })}>
+                            <Trash size={18} />
+                          </Button>
+                          <Button variant="light" className="text-primary border-0 p-2 shadow-sm rounded-circle">
+                            <Pencil size={18} />
+                          </Button>
+                        </td>
+                        <td className="py-3">
+                          <Button
+                            variant="primary"
+                            className="rounded-pill rounded"
+                            onClick={() => reportMutation.mutate({ projectId: project._id, productId: product._id })}
+                          >
+                            Generate Report
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      )}
 
       <AddProductForm
         show={showAddProductModal}

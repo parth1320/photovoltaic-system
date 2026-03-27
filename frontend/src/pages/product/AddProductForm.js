@@ -3,7 +3,6 @@ import { Form, Modal, Button, Row, Col } from "react-bootstrap";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 
 import "leaflet/dist/leaflet.css";
-import "./AddProductForm.module.css";
 import icon from "./constants";
 
 const AddProductForm = ({ show, onHide, productNames, onAddProduct }) => {

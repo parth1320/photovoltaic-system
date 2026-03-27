@@ -47,49 +47,50 @@ const UserProfile = () => {
   if (isError) return <Alert variant="danger">Failed to load profile.</Alert>;
 
   return (
-    <Container>
+    <Container className="py-5">
       <Row className="justify-content-center">
-        <Col xs={12} md={6}>
-          <Card>
-            <Card.Body>
-              <Card.Title>User Profile</Card.Title>
-              <Form>
-                <Form.Group controlId="name">
-                  <Form.Label>Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </Form.Group>
-                <Form.Group controlId="email">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </Form.Group>
-                <div className="mt-4">
-                  <Button
-                    variant="primary"
-                    onClick={() => updateMutation.mutate()}
-                    className="me-2"
-                  >
-                    Update Profile
-                  </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => deleteMutation.mutate()}
-                  >
-                    Delete Profile
-                  </Button>
-                </div>
-              </Form>
-            </Card.Body>
-          </Card>
+        <Col xs={12} md={8} lg={6}>
+          <div className="glass-card border-0 shadow-lg p-5">
+            <h2 className="mb-4 fw-bold text-primary text-center">User Profile</h2>
+            <Form>
+              <Form.Group controlId="name" className="mb-4">
+                <Form.Label className="fw-semibold text-muted">Full Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="p-3"
+                />
+              </Form.Group>
+              <Form.Group controlId="email" className="mb-4">
+                <Form.Label className="fw-semibold text-muted">Email Address</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="p-3"
+                />
+              </Form.Group>
+              <div className="d-flex gap-3 mt-5">
+                <Button
+                  variant="primary"
+                  onClick={() => updateMutation.mutate()}
+                  className="flex-grow-1 rounded-pill p-3 fw-bold shadow-sm"
+                >
+                  Update Profile
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => deleteMutation.mutate()}
+                  className="flex-grow-1 rounded-pill p-3 fw-bold shadow-sm"
+                >
+                  Delete Profile
+                </Button>
+              </div>
+            </Form>
+          </div>
         </Col>
       </Row>
     </Container>

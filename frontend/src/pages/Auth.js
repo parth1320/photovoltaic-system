@@ -11,32 +11,29 @@ const Auth = () => {
     setShowLogin(!showLogin);
   };
   return (
-    <div className="mt-5">
+    <div className="app-container">
+      {showLogin ? <Login inAuth /> : <Register inAuth />}
+      
       <Container>
         <Row className="justify-content-center">
           <Col xs={12} md={6}>
-            <Card>
-              <Card.Body>
-                {showLogin ? <Login /> : <Register />}
-                <div className="text-center mt-3">
-                  {showLogin ? (
-                    <p>
-                      Don't have an account?{" "}
-                      <Button variant="link" onClick={toggleForm}>
-                        Register
-                      </Button>
-                    </p>
-                  ) : (
-                    <p>
-                      Already have an account?{" "}
-                      <Button variant="link" onClick={toggleForm}>
-                        Login
-                      </Button>
-                    </p>
-                  )}
-                </div>
-              </Card.Body>
-            </Card>
+            <div className="text-center mt-3">
+              {showLogin ? (
+                <p>
+                  Don't have an account?{" "}
+                  <Button variant="link" className="fw-bold text-decoration-none" onClick={toggleForm}>
+                    Register
+                  </Button>
+                </p>
+              ) : (
+                <p>
+                  Already have an account?{" "}
+                  <Button variant="link" className="fw-bold text-decoration-none" onClick={toggleForm}>
+                    Login
+                  </Button>
+                </p>
+              )}
+            </div>
           </Col>
         </Row>
       </Container>

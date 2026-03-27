@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Container } from "react-bootstrap";
+import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -44,30 +44,45 @@ const CreateProject = ({ editMode, initialData, onSubmit }) => {
   };
 
   return (
-    <Container>
-      <h2>{editMode ? "" : "Create Project"}</h2>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="projectName">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group controlId="projectDescription">
-          <Form.Label>Description</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={3}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          {editMode ? "Save Changes" : "Create Report"}
-        </Button>
-      </Form>
+    <Container className="py-4">
+      <Row className="justify-content-center">
+        <Col xs={12} md={8} lg={6}>
+          <div className="glass-card border-0 shadow-lg p-5">
+            <h2 className="mb-4 fw-bold text-primary text-center">
+              {editMode ? "Edit Project" : "Create a New Project"}
+            </h2>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group controlId="projectName" className="mb-4">
+                <Form.Label className="fw-semibold text-muted">Project Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Solar Installation Alpha"
+                  className="p-3"
+                  required
+                />
+              </Form.Group>
+              <Form.Group controlId="projectDescription" className="mb-4">
+                <Form.Label className="fw-semibold text-muted">Project Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={4}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Describe your project goals..."
+                  className="p-3"
+                />
+              </Form.Group>
+              <div className="d-grid mt-4">
+                <Button variant="primary" type="submit" size="lg" className="rounded-pill p-3 fw-bold shadow-sm">
+                  {editMode ? "Save Changes" : "Create Project"}
+                </Button>
+              </div>
+            </Form>
+          </div>
+        </Col>
+      </Row>
     </Container>
   );
 };
