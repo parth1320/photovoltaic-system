@@ -42,3 +42,6 @@ export const generateReport = ({ projectId, productId }) =>
       responseType: "arraybuffer",
     })
     .then((r) => r.data);
+
+export const fetchDashboardChart = (userId) =>
+  axiosInstance.get(`${BASE}/dashboard-chart/${userId}`).then((r) => r.data);
