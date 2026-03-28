@@ -34,65 +34,79 @@ const job = cron.schedule("0 * * * *", async () => {
       }
 
       for (const product of products) {
-        const name = product.name;
-        // const powerPeak = product.powerPeak;
-        const orientation = product.orientation;
-        const inclination = product.inclination;
-        const area = product.area;
-        const longitude = product.longitude;
-        const latitude = product.latitude;
+        try {
+          const name = product.name;
+          // const powerPeak = product.powerPeak;
+          const orientation = product.orientation;
+          const inclination = product.inclination;
+          const area = product.area;
+          const longitude = product.longitude;
+          const latitude = product.latitude;
 
-        const startingTime = Math.floor(project.createdAt / 1000);
-        const endingTime = Math.floor(Date.now() / 1000);
+          if (latitude == null || longitude == null) {
+            console.error(`[Cronjob] Skipping product ${product._id}: Missing location coordinates.`);
+            continue;
+          }
 
-        const peakPower = await calculatePowerpeak(
-          latitude,
-          longitude,
-          startingTime,
-          endingTime,
-        );
+          const startingTime = Math.floor(new Date(project.createdAt).getTime() / 1000) || Math.floor(Date.now() / 1000);
+          const endingTime = Math.floor(Date.now() / 1000);
 
-        const efficiency = efficiencyOfProduct(name);
+          const peakPower = await calculatePowerpeak(
+            latitude,
+            longitude,
+            startingTime,
+            endingTime,
+          );
 
-        const electricityGenerated = await calculateElectricityGeneration(
-          peakPower,
-          orientation,
-          inclination,
-          area,
-        );
+          const efficiency = efficiencyOfProduct(name);
 
-        const genratedElectricityBasedOnEfficienncy =
-          electricityGenerated * efficiency;
+          const electricityGenerated = await calculateElectricityGeneration(
+            peakPower,
+            orientation,
+            inclination,
+            area,
+          );
 
-        console.log(
-          `Generated Electricity: ${genratedElectricityBasedOnEfficienncy.toFixed(
-            2,
-          )} kWh`,
-        );
+          if (isNaN(electricityGenerated)) {
+            console.error(`[Cronjob] Skipping product ${product._id}: Calculated generation is NaN.`);
+            continue;
+          }
 
-        //Get current date
-        const currentDate = new Date().setHours(0, 0, 0, 0);
+          const genratedElectricityBasedOnEfficienncy =
+            electricityGenerated * efficiency;
 
-        let report = await Report.findOne({
-          date: currentDate,
-          project: project._id,
-          product: product._id,
-        });
+          console.log(
+            `Generated Electricity for ${product._id}: ${genratedElectricityBasedOnEfficienncy.toFixed(
+              2,
+            )} kWh`,
+          );
 
-        if (!report) {
-          report = new Report({
+          //Get current date
+          const currentDate = new Date().setHours(0, 0, 0, 0);
+
+          let report = await Report.findOne({
+            date: currentDate,
             project: project._id,
             product: product._id,
-            date: currentDate,
-            electricityGenerated: 0,
           });
+
+          if (!report) {
+            report = new Report({
+              project: project._id,
+              product: product._id,
+              date: currentDate,
+              electricityGenerated: 0,
+            });
+          }
+
+          // Update and add generated electricity to electricityGenerated field per hour
+
+          report.electricityGenerated += genratedElectricityBasedOnEfficienncy;
+
+          await report.save();
+        } catch (productErr) {
+          console.error(`[Cronjob] Failed processing product ${product._id}:`, productErr.message);
         }
-
-        // Update and add generated electricity to electricityGenerated field per hour
-
-        report.electricityGenerated += genratedElectricityBasedOnEfficienncy;
-
-        await report.save();
       }
     }
   } catch (error) {
