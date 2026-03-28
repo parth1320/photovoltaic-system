@@ -1,11 +1,23 @@
 const express = require("express");
+const { body, param } = require("express-validator");
+const { handleValidationErrors } = require("../middleware/validation");
 
 const Products = require("../models/product");
 const Project = require("../models/project");
 
 const router = express.Router();
 
-router.post("/:projectId/products", async (req, res) => {
+router.post("/:projectId/products", [
+  param("projectId").isMongoId().withMessage("Invalid Project ID"),
+  body("name").trim().notEmpty().withMessage("Product name is required"),
+  body("powerPeak").optional().isNumeric(),
+  body("orientation").optional().isString().trim(),
+  body("inclination").optional().isNumeric(),
+  body("area").optional().isNumeric(),
+  body("latitude").isFloat({ min: -90, max: 90 }).withMessage("Invalid GPS latitude"),
+  body("longitude").isFloat({ min: -180, max: 180 }).withMessage("Invalid GPS longitude"),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const projectId = req.params.projectId;
 
@@ -59,7 +71,16 @@ router.get("/products", async (req, res) => {
   }
 });
 
-router.put("/products/:productId", async (req, res) => {
+router.put("/products/:productId", [
+  param("productId").isMongoId().withMessage("Invalid Product ID"),
+  body("powerPeak").optional().isNumeric(),
+  body("orientation").optional().isString().trim(),
+  body("inclination").optional().isNumeric(),
+  body("area").optional().isNumeric(),
+  body("latitude").optional().isFloat({ min: -90, max: 90 }).withMessage("Invalid GPS latitude"),
+  body("longitude").optional().isFloat({ min: -180, max: 180 }).withMessage("Invalid GPS longitude"),
+  handleValidationErrors
+], async (req, res) => {
   const { productId } = req.params;
   const { powerPeak, orientation, inclination, area, longitude, latitude } =
     req.body;

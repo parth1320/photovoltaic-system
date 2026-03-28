@@ -1,10 +1,14 @@
 const express = require("express");
-
+const { body, param } = require("express-validator");
+const { handleValidationErrors } = require("../middleware/validation");
 const Project = require("../models/project");
 
 const router = express.Router();
 
-router.get("/allproject/:id", async (req, res) => {
+router.get("/allproject/:id", [
+  param("id").isMongoId().withMessage("Invalid User ID"),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const userId = req.params.id;
     const projects = await Project.find({ user: userId }).populate("products");
@@ -15,7 +19,10 @@ router.get("/allproject/:id", async (req, res) => {
   }
 });
 
-router.get("/project/:id", async (req, res) => {
+router.get("/project/:id", [
+  param("id").isMongoId().withMessage("Invalid Project ID"),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const project = await Project.findById(req.params.id).populate("products");
     if (!project) {
@@ -28,11 +35,21 @@ router.get("/project/:id", async (req, res) => {
   }
 });
 
-router.post("/project/:id", async (req, res) => {
+router.post("/project/:id", [
+  param("id").isMongoId().withMessage("Invalid User ID"),
+  body("name").trim().notEmpty().withMessage("Project name is required"),
+  body("description").trim().notEmpty().withMessage("Description is required"),
+  body("products").optional().isArray().withMessage("Products must be an array"),
+  body("products.*.latitude").optional().isFloat({ min: -90, max: 90 }).withMessage("Invalid GPS latitude"),
+  body("products.*.longitude").optional().isFloat({ min: -180, max: 180 }).withMessage("Invalid GPS longitude"),
+  body("products.*.powerPeak").optional().isNumeric().withMessage("powerPeak must be a number"),
+  body("products.*.orientation").optional().isString().trim(),
+  body("products.*.inclination").optional().isNumeric(),
+  body("products.*.area").optional().isNumeric(),
+  handleValidationErrors
+], async (req, res) => {
   const { name, description, products } = req.body;
   const userId = req.params.id;
-
-  console.log(name);
 
   try {
     const newProject = new Project({
@@ -50,7 +67,19 @@ router.post("/project/:id", async (req, res) => {
   }
 });
 
-router.put("/edit/:id", async (req, res) => {
+router.put("/edit/:id", [
+  param("id").isMongoId().withMessage("Invalid Project ID"),
+  body("name").optional().trim().notEmpty().withMessage("Project name cannot be empty"),
+  body("description").optional().trim().notEmpty().withMessage("Description cannot be empty"),
+  body("products").optional().isArray().withMessage("Products must be an array"),
+  body("products.*.latitude").optional().isFloat({ min: -90, max: 90 }).withMessage("Invalid GPS latitude"),
+  body("products.*.longitude").optional().isFloat({ min: -180, max: 180 }).withMessage("Invalid GPS longitude"),
+  body("products.*.powerPeak").optional().isNumeric(),
+  body("products.*.orientation").optional().isString().trim(),
+  body("products.*.inclination").optional().isNumeric(),
+  body("products.*.area").optional().isNumeric(),
+  handleValidationErrors
+], async (req, res) => {
   const projectId = req.params.id;
   const { name, description, products } = req.body;
 
@@ -74,7 +103,10 @@ router.put("/edit/:id", async (req, res) => {
 });
 
 // delete complete project
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", [
+  param("id").isMongoId().withMessage("Invalid Project ID"),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const project = await Project.findByIdAndDelete(req.params.id);
 
@@ -90,14 +122,18 @@ router.delete("/:id", async (req, res) => {
 });
 
 //delete product from project
-router.delete("/:projectId/products/:productId", async (req, res) => {
+router.delete("/:projectId/products/:productId", [
+  param("projectId").isMongoId().withMessage("Invalid Project ID"),
+  param("productId").isMongoId().withMessage("Invalid Product ID"),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const { projectId, productId } = req.params;
 
     const project = await Project.findById(projectId);
 
     if (!project) {
-      res.status(404).json({ message: "Project not found" });
+      return res.status(404).json({ message: "Project not found" });
     }
 
     const productIndex = project.products.findIndex(

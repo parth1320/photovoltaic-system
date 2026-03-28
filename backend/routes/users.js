@@ -1,14 +1,21 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { body, param } = require("express-validator");
 
 const User = require("../models/users");
 const verifyToken = require("../middleware/authorization");
+const { handleValidationErrors } = require("../middleware/validation");
 
 const router = express.Router();
 
 //User Registration
-router.post("/register", async (req, res) => {
+router.post("/register", [
+  body("name").trim().notEmpty().withMessage("Name is required"),
+  body("email").isEmail().withMessage("Invalid email format").normalizeEmail(),
+  body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -39,7 +46,11 @@ router.post("/register", async (req, res) => {
 
 //User Login
 
-router.post("/login", async (req, res) => {
+router.post("/login", [
+  body("email").isEmail().withMessage("Invalid email format").normalizeEmail(),
+  body("password").notEmpty().withMessage("Password is required"),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -65,7 +76,10 @@ router.post("/login", async (req, res) => {
 
 //User get data
 
-router.get("/user/:id", verifyToken, async (req, res) => {
+router.get("/user/:id", verifyToken, [
+  param("id").isMongoId().withMessage("Invalid User ID"),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const userId = req.params.id;
 
@@ -83,7 +97,12 @@ router.get("/user/:id", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/userUpdate/:id", verifyToken, async (req, res) => {
+router.post("/userUpdate/:id", verifyToken, [
+  param("id").isMongoId().withMessage("Invalid User ID"),
+  body("name").optional().trim().notEmpty().withMessage("Name cannot be empty"),
+  body("email").optional().isEmail().withMessage("Invalid email format").normalizeEmail(),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const userId = req.params.id;
     const { name, email } = req.body;
@@ -101,7 +120,10 @@ router.post("/userUpdate/:id", verifyToken, async (req, res) => {
   }
 });
 
-router.delete("/delete/:id", verifyToken, async (req, res) => {
+router.delete("/delete/:id", verifyToken, [
+  param("id").isMongoId().withMessage("Invalid User ID"),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const id = req.params.id;
     const user = await User.findByIdAndDelete(id);
