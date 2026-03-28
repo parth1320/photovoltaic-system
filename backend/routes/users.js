@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { body, param } = require("express-validator");
+const rateLimit = require("express-rate-limit");
 
 const User = require("../models/users");
 const verifyToken = require("../middleware/authorization");
@@ -9,8 +10,14 @@ const { handleValidationErrors } = require("../middleware/validation");
 
 const router = express.Router();
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 requests per windowMs
+  message: { message: "Too many attempts from this IP, please try again after 15 minutes." },
+});
+
 //User Registration
-router.post("/register", [
+router.post("/register", authLimiter, [
   body("name").trim().notEmpty().withMessage("Name is required"),
   body("email").isEmail().withMessage("Invalid email format").normalizeEmail(),
   body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
@@ -46,7 +53,7 @@ router.post("/register", [
 
 //User Login
 
-router.post("/login", [
+router.post("/login", authLimiter, [
   body("email").isEmail().withMessage("Invalid email format").normalizeEmail(),
   body("password").notEmpty().withMessage("Password is required"),
   handleValidationErrors
